@@ -3,6 +3,7 @@ function [map, figureHandle] = generateMap(listOfObstacles, dimensions, display)
   if size(dimensions,2)==3
     twoDimensions=false;
   endif
+  figureHandle=0;
   if(display)
     % set up display
     figureHandle=figure;
