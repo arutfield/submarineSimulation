@@ -1,4 +1,5 @@
 function figureHandle=plotKnownMap(knownMap)
+resolution = 0.5;
 twoDimensions=true;
 if size(knownMap,3)>1
   twoDimensions=false;
@@ -31,8 +32,8 @@ for y = 1:size(knownMap, 1)
         if (value == 1)
           continue;
         endif
-        x_vect = [x_c-0.5 x_c-0.5 x_c+0.5 x_c+0.5];
-        y_vect = [y_c-0.5 y_c+0.5 y_c+0.5 y_c-0.5];
+        x_vect = [x_c-0.5*resolution x_c-0.5*resolution x_c+0.5*resolution x_c+0.5*resolution];
+        y_vect = [y_c-0.5*resolution y_c+0.5*resolution y_c+0.5*resolution y_c-0.5*resolution];
         switch value
           case 0
             fill(x_vect, y_vect, 'k');
