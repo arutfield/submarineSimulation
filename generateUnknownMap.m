@@ -17,10 +17,11 @@ function [unknownMap]= generateUnknownMap(obstacleMap, submarineStartPoint, subm
 
 
 % corners
-  corners = [submarineStartPoint(1)+x_edgeToCenter, submarineStartPoint(1)+x_edgeToCenter,...
+  corners = [...
+submarineStartPoint(1)+x_edgeToCenter, submarineStartPoint(1)+x_edgeToCenter,...
 submarineStartPoint(1)+x_edgeToCenter, submarineStartPoint(1)+x_edgeToCenter,...
 submarineStartPoint(1)-x_edgeToCenter, submarineStartPoint(1)-x_edgeToCenter,...
-submarineStartPoint(1)-x_edgeToCenter, submarineStartPoint(1)-x_edgeToCenter;
+submarineStartPoint(1)-x_edgeToCenter, submarineStartPoint(1)-x_edgeToCenter;...
 submarineStartPoint(2)+y_edgeToCenter, submarineStartPoint(2)+y_edgeToCenter,...
 submarineStartPoint(2)-y_edgeToCenter, submarineStartPoint(2)-y_edgeToCenter,...
 submarineStartPoint(2)+y_edgeToCenter, submarineStartPoint(2)+y_edgeToCenter,...
@@ -30,8 +31,9 @@ submarineStartPoint(3)+z_edgeToCenter, submarineStartPoint(3)-z_edgeToCenter,...
 submarineStartPoint(3)+z_edgeToCenter, submarineStartPoint(3)-z_edgeToCenter,...
 submarineStartPoint(3)+z_edgeToCenter, submarineStartPoint(3)-z_edgeToCenter];
 
+%testCorner = [submarineStartPoint(1)+x_edgeToCenter; submarineStartPoint(2)+y_edgeToCenter; submarineStartPoint(3)+z_edgeToCenter];
 
-cornersMap = zeros(3,8);
+cornersMap = zeros(size(corners));
 for k=1:size(corners,2)
   cornersMap(:,k) = convertCoordinateToMap(corners(:,k), obstacleMap);  
 endfor
@@ -61,24 +63,71 @@ endfor
       endfor
     endfor
   endfor
-
-  
+  spots=0;
+  obstacleMapSizes = [size(obstacleMap, 1) size(obstacleMap, 2) size(obstacleMap, 3)];
+  maxOfCorners = [max(corners'); min(corners')];
   %get light information
-  for y_c=-flashlightRange-y_edgeToCenter+submarineStartPoint(2):resolution:y_edgeToCenter+submarineStartPoint(2)+flashlightRange
-    for x_c=-flashlightRange-x_edgeToCenter+submarineStartPoint(1):resolution:x_edgeToCenter+submarineStartPoint(1)+flashlightRange
-      for z_c=-flashlightRange-z_edgeToCenter+submarineStartPoint(3):resolution:z_edgeToCenter+submarineStartPoint(3)+flashlightRange
+  
+  %shrink vectors as much as possible
+  y_start = -flashlightRange-y_edgeToCenter+submarineStartPoint(2);
+  x_start = -flashlightRange-x_edgeToCenter+submarineStartPoint(1);
+  z_start = -flashlightRange-z_edgeToCenter+submarineStartPoint(3);
+  startPointMap = convertCoordinateToMap([x_start, y_start, z_start], obstacleMap);
+  % check map start point is within range
+  for k=1:3
+    if startPointMap(k) <= 1
+      startPointMap(k) = 1;
+    else if startPointMap(k) > obstacleMapSizes(k)
+      startPointMap(k) = obstacleMapSizes(k);
+    endif
+    endif
+  endfor
+  
+  finalStartPoint = convertMapToCoordinate(startPointMap, obstacleMap);
+  x_start_c = finalStartPoint(1)-resolution/2;
+  y_start_c = finalStartPoint(2)-resolution/2;
+  z_start_c = finalStartPoint(3)-resolution/2;
+  
+  % check map finish point is within range
+  %shrink vectors as much as possible
+  y_finish = flashlightRange+y_edgeToCenter+submarineStartPoint(2);
+  x_finish = flashlightRange+x_edgeToCenter+submarineStartPoint(1);
+  z_finish = flashlightRange+z_edgeToCenter+submarineStartPoint(3);
+  finishPointMap = convertCoordinateToMap([x_finish, y_finish, z_finish], obstacleMap);
+  % check map start point is within range
+  for k=1:3
+    if finishPointMap(k) <= 1
+      finishPointMap(k) = 1;
+    else if finishPointMap(k) > obstacleMapSizes(k)
+      finishPointMap(k) = obstacleMapSizes(k);
+    endif
+    endif
+  endfor
+  
+  finalFinishPoint = convertMapToCoordinate(finishPointMap, obstacleMap);
+  x_finish_c = finalFinishPoint(1)+resolution/2;
+  y_finish_c = finalFinishPoint(2)+resolution/2;
+  z_finish_c = finalFinishPoint(3)+resolution/2;
+  x_vect = x_start:resolution:x_finish;
+  y_vect =y_start:resolution:y_finish;
+  z_vect = z_start:resolution:z_finish; 
+  for y_c=y_vect
+    for x_c=x_vect
+      for z_c=z_vect
+        disp(['Spots checked: ', num2str(spots)]);
+        spots++;
         pointOnMap = convertCoordinateToMap([x_c, y_c, z_c]', obstacleMap);
         y = pointOnMap(1);
         x = pointOnMap(2);
         z = pointOnMap(3);
-        if (y<1 || y>size(obstacleMap,1) || x<1 || x>size(obstacleMap,2) || z<1 || z>size(obstacleMap,3))
+        if (y<1 || y>obstacleMapSizes(1) || x<1 || x>obstacleMapSizes(2) || z<1 || z>obstacleMapSizes(3))
           continue;
         endif
         if (unknownMap(y, x, z) != 0)
           continue;
         else
           % only if point is within flashlight radius of a corner
-          if (isVisible(x_c, y_c, z_c, x, y, z, flashlightRange, corners, cornersMap, obstacleMap))
+          if (isVisible(x_c, y_c, z_c, x, y, z, flashlightRange, corners, cornersMap, obstacleMap, unknownMap, maxOfCorners, resolution))
             unknownMap(y, x, z)=(obstacleMap(y, x, z)+1);          
           endif
         endif
@@ -89,7 +138,8 @@ endfor
 end
 
 
-function visible=isVisible(x_c, y_c, z_c, x, y, z, flashlightRange, corners, cornersMap, obstacleMap)
+function visible=isVisible(x_c, y_c, z_c, x, y, z, flashlightRange, corners, cornersMap, obstacleMap, unknownMap, maxOfCorners, resolution)
+  %corners = corners(:,1);
   visible = false;
   cornersInRange = [];
 
@@ -107,37 +157,40 @@ allclear = false;
   endif
   
   % tough part - make sure there are no obstacles between it and sub
-%  for r=1:size(cornersInRange, 2)
-%    differences = [x-cornersInRange(1,r) y-cornersInRange(2,r) z-cornersInRange(3,r)];
-%    abs_differences = abs(differences);
-%    unblocked = true;
-    % check if horizontal or vertical
-%    if (abs_differences(2)<0.5 && abs_differences(3)<0.5)
-%      increment = (differences(1)/abs_differences(1));
-%      subPoint = [x-increment y z];
-      
-%      while (abs(subPoint(1)-cornersInRange(1,r))<1)
- %       if (obstacleMap(subPoint(1), y, z) > 0)
- %         unblocked = false;
-  %        break;
-  %      endif
-  %      subPoint(1) = subPoint(1)-increment;
-  %    endwhile
-  %  endif
-    
-    
-   % subPoint = [x y z]';
-    %while(norm([subPoint(1)-cornersInRange(2,r), subPoint(2)-cornersInRange(1,c), subPoint-cornersInRange(3,c)]) >= 1)
-       
-    %endwhile
-%    if unblocked
- %     allclear = true;
-  %    break;
-  %  endif
-  %endfor
-  %if !allclear
-  %  return;
-  %endif
   
+  provenClear = false;
+  for k=1:size(cornersInRange,2)
+    cornerInMap = convertCoordinateToMap(cornersInRange(:,k), obstacleMap);
+    dx = x_c-cornersInRange(1,k);
+    dy = y_c-cornersInRange(2,k);
+    dz = z_c-cornersInRange(3,k);
+    N = norm([dx, dy, dz]);
+    increment = resolution;
+    a=1;
+    pathNotClear = false;
+    while (a*increment < N)
+       proportion = a*increment/N;
+       pointToCheck = [cornersInRange(1,k)+proportion*dx; cornersInRange(2,k)+proportion*dy; cornersInRange(3,k)+proportion*dz];
+       pointToCheckMap = convertCoordinateToMap(pointToCheck, obstacleMap);
+       if (isequal(pointToCheckMap, [y x z]') || isequal(pointToCheckMap, cornerInMap))
+         break;
+       endif
+       if (obstacleMap(pointToCheckMap(1), pointToCheckMap(2), pointToCheckMap(3)) > 0 ||...
+         (pointToCheck(1) > maxOfCorners(2,1) && pointToCheck(1) < maxOfCorners(1,1) &&...
+         pointToCheck(2) > maxOfCorners(2,2) && pointToCheck(2) < maxOfCorners(1,2) &&...
+         pointToCheck(3) > maxOfCorners(2,3) && pointToCheck(3) < maxOfCorners(1,3)))
+         pathNotClear = true;
+         break;
+       endif
+       a++;
+    endwhile
+    if (!pathNotClear)
+      provenClear = true;
+      break;
+    endif
+  endfor
+  if (!provenClear)
+    return;
+  endif
   visible = true;
 endfunction

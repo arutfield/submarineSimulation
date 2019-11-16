@@ -22,8 +22,8 @@ function coordinate = convertMapToCoordinate(mapLocation, map)
   %-1.5  5
   % -0.5 4
   
-  
   %z coord    map
+  % 0            1
   % -0.5         2
   % -1.5         4
   % -2.5         6

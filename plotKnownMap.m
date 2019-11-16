@@ -9,7 +9,7 @@ figureHandle=figure;
 hold on;
 axisVector=[];
 for d=1:2
-  axisVector = [axisVector -dimensions(d)/2 dimensions(d)/2];
+  axisVector = [axisVector -dimensions(d)/2*resolution dimensions(d)/2*resolution];
 endfor
 if !twoDimensions
   axisVector = [axisVector -dimensions(3) 0];
