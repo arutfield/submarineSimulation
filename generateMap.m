@@ -1,42 +1,21 @@
-function [map, figureHandle] = generateMap(listOfObstacles, dimensions, display)
-  resolution = 0.5;
+function [map, figureHandle] = generateMap(listOfObstacles, dimensions, display, resolution)
+%  resolution = 0.5;
   twoDimensions=true;
   if size(dimensions,2)==3
     twoDimensions=false;
   endif
   figureHandle=0;
-  if(display)
-    % set up display
-    figureHandle=figure;
-    hold on;
-    axisVector=[];
-    for d=1:2
-      axisVector = [axisVector -dimensions(d)/2 dimensions(d)/2];
-    endfor
-    if !twoDimensions
-      axisVector = [axisVector -dimensions(3) 0];
-    endif
-    axis(axisVector);
-  endif
   if(twoDimensions)
-    map = zeros(dimensions(2)/resolution, dimensions(1)/resolution);  
+    map = zeros(round(dimensions(2)/resolution), round(dimensions(1)/resolution));  
   else
-    map = zeros(dimensions(2)/resolution, dimensions(1)/resolution, dimensions(3)/resolution);
+    map = zeros(round(dimensions(2)/resolution), round(dimensions(1)/resolution), round(dimensions(3)/resolution));
   endif
   for ob = 1:size(listOfObstacles, 2)
-    mapCoordinates = convertCoordinateToMap(listOfObstacles(:,ob), map);
+    mapCoordinates = convertCoordinateToMap(listOfObstacles(:,ob), map, resolution, twoDimensions);
     map(mapCoordinates(1), mapCoordinates(2), mapCoordinates(3)) = 1;
-    if(display)
-      if twoDimensions
-        x = [listOfObstacles(1,ob)-0.5*resolution listOfObstacles(1,ob)-0.5*resolution...
-        listOfObstacles(1,ob)+0.5*resolution listOfObstacles(1,ob)+0.5*resolution];
-        y = [listOfObstacles(2,ob)-0.5*resolution listOfObstacles(2,ob)+0.5*resolution...
-        listOfObstacles(2,ob)+0.5*resolution listOfObstacles(2,ob)-0.5*resolution];
-        fill(x, y, 'r');
-      else
-        drawCube([listOfObstacles(1,ob) listOfObstacles(2,ob) listOfObstacles(3,ob) resolution 0 0 0], 'FaceColor', 'r');
-      endif
-    endif
   endfor
+  if(display)
+    figureHandle=plotMap(map, listOfObstacles, dimensions, resolution, twoDimensions);
+  endif
   
 endfunction

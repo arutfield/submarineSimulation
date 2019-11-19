@@ -1,11 +1,11 @@
-function path = generateWaveformPath(startPoint, finishPoint, map)
+function path = generateWaveformPath(startPoint, finishPoint, map, resolution)
   pointMap = zeros(size(map));
   twoDimensions = false;
   if size(map,3)== 0
     twoDimensions = true;
   endif
-  startPointMap = convertCoordinateToMap(startPoint, map);
-  finishPointMap = convertCoordinateToMap(finishPoint, map);
+  startPointMap = convertCoordinateToMap(startPoint, map, resolution);
+  finishPointMap = convertCoordinateToMap(finishPoint, map, resolution);
   pointMap(startPointMap(1), startPointMap(2), startPointMap(3)) = -1;
   pointMap(finishPointMap(1), finishPointMap(2), finishPointMap(3)) = 1;
   % set obstacles on point map

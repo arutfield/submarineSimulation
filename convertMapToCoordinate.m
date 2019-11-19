@@ -1,5 +1,5 @@
-function coordinate = convertMapToCoordinate(mapLocation, map)
-  resolution = 0.5;  
+function coordinate = convertMapToCoordinate(mapLocation, map, resolution)
+  %resolution = 0.5;  
   twoDimensions = false;
   if (size(map,3) < 2)
     twoDimensions = true;
@@ -7,7 +7,7 @@ function coordinate = convertMapToCoordinate(mapLocation, map)
   offsets = [size(map, 1)/2; size(map, 2)/2; size(map,3)/2];
   coordinate = [resolution*(mapLocation(2)-offsets(2)-0.5);...
   resolution*(offsets(1)+0.5-mapLocation(1));...
-  0.5-mapLocation(3)*resolution];
+  resolution*(1-mapLocation(3))];
   
   % 3 8 1 -> 2 0.5 0 (6, 7) map offsets (3, 3.5 0)
   

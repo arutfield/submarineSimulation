@@ -1,5 +1,6 @@
 pkg load geometry;
 clear; close all;
+resolution = 2;
 loadSubmarineSpecifications;
 testPt = [1 2 3]';
 testPt2 = [-3 -2 2]';
@@ -8,13 +9,13 @@ obstacles=[1.0 -1.0 -1.0; 0.5 -0.5 1.5; 0.0 0.0 0.0];
 obstacles3D = [0.5  0.5  1.5  0.5 -1.5  1.5  1.5  1.5  ;...
                1    0   -1    0   -1   -1    0    0;...
               -4.5 -2.5 -4.5 -3.5 -1.5 -3.5 -4.5 -0.5];
-[map, figureHandle2DMap] = generateMap(obstacles, dimensions2D, true);
-[map3D, figureHandle3DMap] = generateMap(obstacles3D, [4 5 6], true);
-testPtMap=convertCoordinateToMap(testPt, map3D);
-testPt2Map=convertCoordinateToMap(testPt2, map3D);
+[map, figureHandle2DMap] = generateMap(obstacles, dimensions2D, true, resolution);
+[map3D, figureHandle3DMap] = generateMap(obstacles3D, [4 5 6], true, resolution);
+testPtMap=convertCoordinateToMap(testPt, map3D, resolution);
+testPt2Map=convertCoordinateToMap(testPt2, map3D, resolution);
 
-testPtReturn=convertMapToCoordinate(testPtMap, map3D);
-testPt2Return=convertMapToCoordinate(testPt2Map, map3D);
+testPtReturn=convertMapToCoordinate(testPtMap, map3D, resolution);
+testPt2Return=convertMapToCoordinate(testPt2Map, map3D, resolution);
 if (isequal(testPtReturn, testPt) && isequal(testPt2Return, testPt2))
   disp("pass pt conversion");
 else
@@ -24,56 +25,67 @@ endif
 
 startPoint1=[-1 0.5 0]';
 finishPoint1=[2 2.5 0]';
-wavePath1 = generateWaveformPath(startPoint1, finishPoint1, map);
+wavePath1 = generateWaveformPath(startPoint1, finishPoint1, map, resolution);
 
 startPoint2=[-2 2.5 0]';
 finishPoint2=[2 -2.5 0]'
-wavePath2 = generateWaveformPath(startPoint2, finishPoint2, map);
+wavePath2 = generateWaveformPath(startPoint2, finishPoint2, map, resolution);
  
 startPoint1_3d = [-1.5 1 -0.5]';
 finishPoint1_3d = [1.5 2 -3.5]';
-wavePath1_3d = generateWaveformPath(startPoint1_3d, finishPoint1_3d, map3D);
+wavePath1_3d = generateWaveformPath(startPoint1_3d, finishPoint1_3d, map3D, resolution);
 
 startPoint2_3d = [1.5 -2 -5.5]';
 finishPoint2_3d = [-1.5 2 -0.5]';
-wavePath2_3d = generateWaveformPath(startPoint2_3d, finishPoint2_3d, map3D);
+wavePath2_3d = generateWaveformPath(startPoint2_3d, finishPoint2_3d, map3D, resolution);
 
 % plot wavePath 2d
 wavePath1Coordinates = zeros(size(wavePath1));
 wavePath2Coordinates = zeros(size(wavePath2));
 for k=1:size(wavePath1,2)
-  wavePath1Coordinates(:,k)=convertMapToCoordinate(wavePath1(:,k), map);
+  wavePath1Coordinates(:,k)=convertMapToCoordinate(wavePath1(:,k), map, resolution);
 endfor
 for k=1:size(wavePath2,2)
-  wavePath2Coordinates(:,k)=convertMapToCoordinate(wavePath2(:,k), map);
+  wavePath2Coordinates(:,k)=convertMapToCoordinate(wavePath2(:,k), map, resolution);
 endfor
 figure(figureHandle2DMap);
 hold on;
-plot3(wavePath1Coordinates(1,:), wavePath1Coordinates(2,:), wavePath1Coordinates(3,:), 'b');
 plot3(wavePath2Coordinates(1,:), wavePath2Coordinates(2,:), wavePath2Coordinates(3,:), 'r');
 
-wayPoints = generateWayPoints(wavePath1Coordinates);
-scatter3(wayPoints(1,:), wayPoints(2,:), wayPoints(3,:));
-wayPoints2 = generateWayPoints(wavePath2Coordinates);
-scatter3(wayPoints2(1,:), wayPoints2(2,:), wayPoints2(3,:));
+if (length(wavePath1Coordinates) == 0)
+  disp("wave path 1 has no path");
+else
+  plotMap(map, obstacles, dimensions2D, resolution, true)
+  hold on;
+  plot3(wavePath1Coordinates(1,:), wavePath1Coordinates(2,:), wavePath1Coordinates(3,:), 'b');  
+  wayPoints = generateWayPoints(wavePath1Coordinates, resolution);
+  scatter3(wayPoints(1,:), wayPoints(2,:), wayPoints(3,:));
+endif
+if (length(wavePath2Coordinates) == 0)
+  disp("wave path 2 has no path");
+else
+  wayPoints2 = generateWayPoints(wavePath2Coordinates, resolution);
+  scatter3(wayPoints2(1,:), wayPoints2(2,:), wayPoints2(3,:));
+endif
+
 
 % plot wavePath 3d
 wavePath1_3dCoordinates = zeros(size(wavePath1_3d));
 wavePath2_3dCoordinates = zeros(size(wavePath2_3d));
 for k=1:size(wavePath1_3d,2)
-  wavePath1_3dCoordinates(:,k)=convertMapToCoordinate(wavePath1_3d(:,k), map3D);
+  wavePath1_3dCoordinates(:,k)=convertMapToCoordinate(wavePath1_3d(:,k), map3D, resolution);
 endfor
 for k=1:size(wavePath2_3d,2)
-  wavePath2_3dCoordinates(:,k)=convertMapToCoordinate(wavePath2_3d(:,k), map3D);
+  wavePath2_3dCoordinates(:,k)=convertMapToCoordinate(wavePath2_3d(:,k), map3D, resolution);
 endfor
 figure(figureHandle3DMap);
 hold on;
 plot3(wavePath1_3dCoordinates(1,:), wavePath1_3dCoordinates(2,:), wavePath1_3dCoordinates(3,:), 'g');
 plot3(wavePath2_3dCoordinates(1,:), wavePath2_3dCoordinates(2,:), wavePath2_3dCoordinates(3,:), 'r');
 
-wayPoints_3d = generateWayPoints(wavePath1_3dCoordinates);
+wayPoints_3d = generateWayPoints(wavePath1_3dCoordinates, resolution);
 scatter3(wayPoints_3d(1,:), wayPoints_3d(2,:), wayPoints_3d(3,:));
-wayPoints2_3d = generateWayPoints(wavePath2_3dCoordinates);
+wayPoints2_3d = generateWayPoints(wavePath2_3dCoordinates, resolution);
 scatter3(wayPoints2_3d(1,:), wayPoints2_3d(2,:), wayPoints2_3d(3,:));
 
 % test trajectory generator

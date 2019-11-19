@@ -1,5 +1,5 @@
-function mapLocation = convertCoordinateToMap(coordinate, map)
-  resolution = 0.5;
+function mapLocation = convertCoordinateToMap(coordinate, map, resolution)
+  %resolution = 0.5;
 
   twoDimensions = false;
   if (size(map,3) < 2)
