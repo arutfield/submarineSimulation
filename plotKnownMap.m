@@ -6,13 +6,16 @@ if size(knownMap,3)>1
 endif
 dimensions=size(knownMap);
 figureHandle=figure;
+if (twoDimensions)
+  set(gca, 'Color', 'k');
+endif
 hold on;
 axisVector=[];
 for d=1:2
-  axisVector = [axisVector -dimensions(d)/2*resolution dimensions(d)/2*resolution];
+  axisVector = [axisVector -dimensions(3-d)/2*resolution dimensions(3-d)/2*resolution];
 endfor
 if !twoDimensions
-  axisVector = [axisVector -dimensions(3) 0];
+  axisVector = [axisVector -dimensions(3)*resolution 0];
 endif
 axis(axisVector);
 if(twoDimensions)
@@ -26,9 +29,8 @@ for y = 1:size(knownMap, 1)
   for x = 1:size(knownMap, 2)
     for z = 1:size(knownMap, 3)
         value = knownMap(y, x, z);
-        if (value == 1)
-          %spot++;
-          continue;
+        if (value == 0 && twoDimensions) || (value == 1 && !twoDimensions)
+           continue;
         endif
 
       %disp(['Spot: ', num2str(spot)]);
@@ -40,18 +42,26 @@ for y = 1:size(knownMap, 1)
         x_vect = [x_c-shiftValue x_c-shiftValue x_c+shiftValue x_c+shiftValue];
         y_vect = [y_c-shiftValue y_c+shiftValue y_c+shiftValue y_c-shiftValue];
         switch value
-          case 0
-            fill(x_vect, y_vect, 'k');
+          case 1
+            fill(x_vect, y_vect, 'w', 'EdgeColor', 'None');
           case 2
-            fill(x_vect, y_vect, 'r');
+            fill(x_vect, y_vect, 'r', 'EdgeColor', 'None');
           case 3
-            fill(x_vect, y_vect, 'g');
+            fill(x_vect, y_vect, 'g', 'EdgeColor', 'None');
           otherwise
             error(["unknown value: ", num2str(value)]);
           end
       else
-          
-          %drawCube([listOfObstacles(1,ob) listOfObstacles(2,ob) listOfObstacles(3,ob) 1 0 0 0], 'FaceColor', 'r');
+        switch value
+          case 0
+            drawCube([x_c y_c z_c resolution 0 0 0], 'FaceColor', 'k');
+          case 2
+            drawCube([x_c y_c z_c resolution 0 0 0], 'FaceColor', 'r');
+          case 3
+            drawCube([x_c y_c z_c resolution 0 0 0], 'FaceColor', 'g');
+          otherwise
+            error(["unknown value: ", num2str(value)]);
+          end
       endif
       %spot++;
     endfor

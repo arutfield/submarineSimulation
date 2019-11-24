@@ -68,72 +68,53 @@ endfor
   maxOfCorners = [max(corners'); min(corners')];
   %get light information
   
+     % get corners in coordinate frame
+   vector_ult = convertMapToCoordinate(ones(3,1), obstacleMap, resolution);
+   tol = resolution/2-1e-3;
+   y_max_c = vector_ult(2)+tol;
+   x_min_c = vector_ult(1)-tol;
+   z_max_c = vector_ult(3)+tol;
+   
+   vector_lrb = convertMapToCoordinate([size(obstacleMap, 1), size(obstacleMap, 2), size(obstacleMap, 3)], obstacleMap, resolution);
+   y_min_c = vector_lrb(2)-tol;
+   x_max_c = vector_lrb(1)+tol;
+   z_min_c = vector_lrb(3)-tol;
+
+  
   %shrink vectors as much as possible
   y_start = -flashlightRange-y_edgeToCenter+submarineStartPoint(2);
   x_start = -flashlightRange-x_edgeToCenter+submarineStartPoint(1);
   z_start = -flashlightRange-z_edgeToCenter+submarineStartPoint(3);
-  startPointMap = convertCoordinateToMap([x_start, y_start, z_start], obstacleMap, resolution);
-  % check map start point is within range
-  altered = zeros(1,3);
-  for k=1:3
-    if startPointMap(k) < 1
-      startPointMap(k) = 1;
-      altered(k)=1;
-    else if startPointMap(k) > obstacleMapSizes(k)
-      startPointMap(k) = obstacleMapSizes(k);
-      altered(k)=1;
+
+    % check map finish point is within range
+    if (y_start < y_min_c)
+      y_start = y_min_c;
     endif
+    if (x_start < x_min_c)
+      x_start = x_min_c;
     endif
-  endfor
-  
-  finalStartPoint = convertMapToCoordinate(startPointMap, obstacleMap, resolution);
-  x_start_c = x_start;
-  if (altered(1) == 1)
-    x_start_c = finalStartPoint(1)-resolution/2;
-  endif
-  y_start_c = y_start;
-  if (altered(2) == 1)
-    y_start_c = finalStartPoint(2)-resolution/2;
-  endif
-  z_start_c = z_start;
-  if (altered(3) == 1)
-    z_start_c = finalStartPoint(3)-resolution/2;
-  endif
-  % check map finish point is within range
+    if (z_start < z_min_c)
+      z_start = z_min_c;
+    endif
   %shrink vectors as much as possible
   y_finish = flashlightRange+y_edgeToCenter+submarineStartPoint(2);
   x_finish = flashlightRange+x_edgeToCenter+submarineStartPoint(1);
   z_finish = flashlightRange+z_edgeToCenter+submarineStartPoint(3);
-  finishPointMap = convertCoordinateToMap([x_finish, y_finish, z_finish], obstacleMap, resolution);
-  % check map start point is within range
-  altered = zeros(1,3);
-  for k=1:3
-    if finishPointMap(k) < 1
-      finishPointMap(k) = 1;
-      altered(k) = 1;
-    else if finishPointMap(k) > obstacleMapSizes(k)
-      finishPointMap(k) = obstacleMapSizes(k);
-      altered(k) = 1;
+
+    if (y_finish > y_max_c)
+      y_finish = y_max_c;
     endif
+    if (x_finish > x_max_c)
+      x_finish = x_max_c;
     endif
-  endfor
+    if (z_finish > z_max_c)
+      z_finish = z_max_c;
+    endif
+
   
-  finalFinishPoint = convertMapToCoordinate(finishPointMap, obstacleMap, resolution);
-  x_finish_c = x_finish;
-  if (altered(1) == 1)
-    x_finish_c = finalStartPoint(1)+resolution/2;
-  endif
-  y_finish_c = y_finish;
-  if (altered(2) == 1)
-    y_finish_c = finalStartPoint(2)+resolution/2;
-  endif
-  z_finish_c = z_finish;
-  if (altered(3) == 1)
-    z_finish_c = finalStartPoint(3)+resolution/2;
-  endif
-  x_vect = x_start_c:resolution:x_finish_c;
-  y_vect =y_start_c:resolution:y_finish_c;
-  z_vect = z_start_c:resolution:z_finish_c;
+  x_vect = x_start:resolution:x_finish;
+  y_vect =y_start:resolution:y_finish;
+  z_vect = z_start:resolution:z_finish;
   if (obstacleMapSizes(3) < 2)
     z_vect = 0;
   endif
@@ -146,9 +127,9 @@ endfor
         y = pointOnMap(1);
         x = pointOnMap(2);
         z = pointOnMap(3);
-%        if (y<1 || y>obstacleMapSizes(1) || x<1 || x>obstacleMapSizes(2) || z<1 || z>obstacleMapSizes(3))
-%          continue;
-%        endif
+        if (y<1 || y>obstacleMapSizes(1) || x<1 || x>obstacleMapSizes(2) || z<1 || z>obstacleMapSizes(3))
+          continue;
+        endif
         if (unknownMap(y, x, z) != 0)
           continue;
         else

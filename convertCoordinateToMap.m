@@ -1,10 +1,4 @@
 function mapLocation = convertCoordinateToMap(coordinate, map, resolution)
-  %resolution = 0.5;
-
-  twoDimensions = false;
-  if (size(map,3) < 2)
-    twoDimensions = true;
-  endif
   offsets = [size(map, 1)/2; size(map, 2)/2; size(map,3)/2];
   mapLocation = [round(offsets(1)+0.5-coordinate(2)/resolution);...
   round(offsets(2)+0.5+coordinate(1)/resolution); round(1-coordinate(3)/resolution)];
