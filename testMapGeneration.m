@@ -11,6 +11,10 @@ dimensions2D = [19 17];
 [map, figureHandle2DMap] = generateMap(obstacles, dimensions2D, false, resolution);
 initialUnknownMap = generateUnknownMap(map, [0 0 0]', [4 2 0], 5, resolution);
 figureHandle = plotKnownMap(initialUnknownMap, resolution);
+unknownMapUpdated = updateMap(map, initialUnknownMap, [1.5 2 0]', [4 2 0], 5, resolution);
+figureHandleUpdated = plotKnownMap(unknownMapUpdated, resolution);
+
+
 
 resolution = 5;
 % big map for timing
@@ -23,6 +27,9 @@ resolution = 0.5;
 obstacles3D = [0.5  2.5  1.5  0.5 -1.5  1.5  1.5  1.5  ;...
                1    0   -1    0   -1   -1    0    0;...
               -2.5 -2.5 -2.5 -3.5 -2.5 -3.5 -2.5 -2.5];
+submarineDimensions3D = [4 2 1];
 [map3D, figureHandle3DMap] = generateMap(obstacles3D, [6 7 8], false, resolution);
-initialUnknownMap3D = generateUnknownMap(map3D, [0 0 -1]', [4 2 1], 5, resolution);
+initialUnknownMap3D = generateUnknownMap(map3D, [0 0 -1]', submarineDimensions3D, 5, resolution);
 figureHandle3D = plotKnownMap(initialUnknownMap3D, resolution);
+unknownMapUpdated3D = updateMap(map3D, initialUnknownMap3D, [-1 2 -4]', submarineDimensions3D, 5, resolution);
+figureHandleUpdated3D = plotKnownMap(unknownMapUpdated3D, resolution);
