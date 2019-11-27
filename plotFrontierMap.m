@@ -19,7 +19,7 @@ function figureHandle = plotFrontierMap(map, frontier, centroid, resolution)
         y_vect = [y_c-shiftValue y_c+shiftValue y_c+shiftValue y_c-shiftValue];
         fill(x_vect, y_vect, 'b', 'EdgeColor', 'None');
       else
-        drawCube([x_c y_c z_c resolution 0 0 0], 'FaceColor', 'b');
+        drawCube([x_c y_c z_c resolution/2 0 0 0], 'FaceColor', 'b');
       endif
   endfor
   
@@ -29,7 +29,7 @@ function figureHandle = plotFrontierMap(map, frontier, centroid, resolution)
       y_vect = [coordinatePoint(2)-shiftValue coordinatePoint(2)+shiftValue coordinatePoint(2)+shiftValue coordinatePoint(2)-shiftValue];
       fill(x_vect, y_vect, 'm', 'EdgeColor', 'None');
   else
-      drawCube([coordinatePoint(1) coordinatePoint(2) coordinatePoint(3) resolution 0 0 0], 'FaceColor', 'b');
+      drawCube([coordinatePoint(1) coordinatePoint(2) coordinatePoint(3) resolution/2 0 0 0], 'FaceColor', 'm');
   endif
   
 endfunction
