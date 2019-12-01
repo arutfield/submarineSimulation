@@ -12,7 +12,7 @@ function path = generateWaveformPath(startPoint, finishPoint, map, resolution)
   for v=1:size(map,1)
     for k=1:size(map,2)
       for l=1:size(map,3)
-        if map(v,k,l) == 1
+        if map(v,k,l) == 2
           pointMap(v,k,l)=-3;
         endif
       endfor
@@ -24,7 +24,6 @@ function path = generateWaveformPath(startPoint, finishPoint, map, resolution)
   while (!success)
    focusPoint = pointsToExpand(:,1);
    score = pointMap(focusPoint(1), focusPoint(2), focusPoint(3))+1;
-   %score = norm(focusPoint-finishPointMap);
    for v=-1:1
          if focusPoint(1)+v < 1 || focusPoint(1)+v > size(pointMap,1)
            continue;

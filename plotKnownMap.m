@@ -1,11 +1,16 @@
-function figureHandle=plotKnownMap(knownMap, resolution)
+function figureHandle=plotKnownMap(knownMap, resolution, figureHandle=0)
 %resolution = 0.5;
 twoDimensions=true;
 if size(knownMap,3)>1
   twoDimensions=false;
 endif
 dimensions=size(knownMap);
-figureHandle=figure;
+
+if (figureHandle == 0)
+  figureHandle=figure;
+else
+  figure(figureHandle);
+endif
 if (twoDimensions)
   set(gca, 'Color', 'k');
 endif

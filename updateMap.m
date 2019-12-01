@@ -140,8 +140,13 @@ endfor
           spots++;
 
           % only if point is within flashlight radius of a corner
-          if (isVisible(x_c, y_c, z_c, x, y, z, flashlightRange, corners, cornersMap, obstacleMap, updatedMap, maxOfCorners, resolution))
-            updatedMap(y, x, z)=obstacleMap(y, x, z)+1;          
+          [updatedMap, visible] = isVisible(x_c, y_c, z_c, x, y, z, flashlightRange, corners, cornersMap, obstacleMap, updatedMap, maxOfCorners, resolution);
+          if (visible)
+            if (obstacleMap(y, x, z) == 2)
+              updatedMap(y, x, z) = 2;
+            else
+              updatedMap(y, x, z) = 1;
+            endif
           endif
         endif
       endfor
@@ -152,7 +157,7 @@ endfor
 end
 
 
-function visible=isVisible(x_c, y_c, z_c, x, y, z, flashlightRange, corners, cornersMap, obstacleMap, updatedMap, maxOfCorners, resolution)
+function [updatedMap, visible]=isVisible(x_c, y_c, z_c, x, y, z, flashlightRange, corners, cornersMap, obstacleMap, updatedMap, maxOfCorners, resolution)
   %corners = corners(:,1);
   visible = false;
   cornersInRange = [];
@@ -188,6 +193,9 @@ allclear = false;
        pointToCheckMap = convertCoordinateToMap(pointToCheck, obstacleMap, resolution);
        if (isequal(pointToCheckMap, [y x z]') || isequal(pointToCheckMap, cornerInMap))
          break;
+       endif
+       if (updatedMap(pointToCheckMap(1), pointToCheckMap(2), pointToCheckMap(3)) == 0)
+         updatedMap(pointToCheckMap(1), pointToCheckMap(2), pointToCheckMap(3)) = obstacleMap(pointToCheckMap(1), pointToCheckMap(2), pointToCheckMap(3));
        endif
        if (obstacleMap(pointToCheckMap(1), pointToCheckMap(2), pointToCheckMap(3)) > 0 ||...
          (pointToCheck(1) > maxOfCorners(2,1) && pointToCheck(1) < maxOfCorners(1,1) &&...

@@ -1,8 +1,8 @@
-function [unknownMap]= generateUnknownMap(obstacleMap, submarineStartPoint, submarineDimensions, flashlightRange, resolution)
+function [updatedMap]= generateUnknownMap(obstacleMap, submarineStartPoint, submarineDimensions, flashlightRange, resolution)
 %  resolution = 0.5;
   % for map of the unknown: 0 is unknown, 1 is open, 2 is obstacle, 3 is submarine current position
   
-  unknownMap = zeros(size(obstacleMap));
+  updatedMap = zeros(size(obstacleMap));
   submarineStartMapPoint = convertCoordinateToMap(submarineStartPoint, obstacleMap, resolution);
   disp(['Submarine start point: ', num2str(submarineStartPoint'), ', converted to map: ', num2str(submarineStartMapPoint')]);
   if (obstacleMap(submarineStartMapPoint(1), submarineStartMapPoint(2), submarineStartMapPoint(3)) != 0)
@@ -58,7 +58,7 @@ endfor
         if (obstacleMap(y, x, z) != 0)
           error("point is an obstacle, no room for a sub");
         else
-          unknownMap(y, x, z)=3;
+          updatedMap(y, x, z)=3;
         endif
       endfor
     endfor
@@ -128,13 +128,18 @@ endfor
         if (y<1 || y>obstacleMapSizes(1) || x<1 || x>obstacleMapSizes(2) || z<1 || z>obstacleMapSizes(3))
           continue;
         endif
-        if (unknownMap(y, x, z) != 0)
+        if (updatedMap(y, x, z) != 0)
           continue;
         else
           spots++;
           % only if point is within flashlight radius of a corner
-          if (isVisible(x_c, y_c, z_c, x, y, z, flashlightRange, corners, cornersMap, obstacleMap, unknownMap, maxOfCorners, resolution))
-            unknownMap(y, x, z)=obstacleMap(y, x, z)+1;          
+          [updatedMap, visible] = isVisible(x_c, y_c, z_c, x, y, z, flashlightRange, corners, cornersMap, obstacleMap, updatedMap, maxOfCorners, resolution);
+          if (visible)
+            if (obstacleMap(y, x, z) == 2)
+              updatedMap(y, x, z) = 2;
+            else
+              updatedMap(y, x, z) = 1;
+            endif
           endif
         endif
       endfor
@@ -144,7 +149,7 @@ endfor
 end
 
 
-function visible=isVisible(x_c, y_c, z_c, x, y, z, flashlightRange, corners, cornersMap, obstacleMap, unknownMap, maxOfCorners, resolution)
+function [updatedMap, visible]=isVisible(x_c, y_c, z_c, x, y, z, flashlightRange, corners, cornersMap, obstacleMap, updatedMap, maxOfCorners, resolution)
   %corners = corners(:,1);
   visible = false;
   cornersInRange = [];
@@ -180,6 +185,9 @@ allclear = false;
        pointToCheckMap = convertCoordinateToMap(pointToCheck, obstacleMap, resolution);
        if (isequal(pointToCheckMap, [y x z]') || isequal(pointToCheckMap, cornerInMap))
          break;
+       endif
+       if (updatedMap(pointToCheckMap(1), pointToCheckMap(2), pointToCheckMap(3)) == 0)
+         updatedMap(pointToCheckMap(1), pointToCheckMap(2), pointToCheckMap(3)) = obstacleMap(pointToCheckMap(1), pointToCheckMap(2), pointToCheckMap(3));
        endif
        if (obstacleMap(pointToCheckMap(1), pointToCheckMap(2), pointToCheckMap(3)) > 0 ||...
          (pointToCheck(1) > maxOfCorners(2,1) && pointToCheck(1) < maxOfCorners(1,1) &&...

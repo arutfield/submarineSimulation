@@ -1,5 +1,4 @@
 function [map, figureHandle] = generateMap(listOfObstacles, dimensions, display, resolution)
-%  resolution = 0.5;
   twoDimensions=true;
   if size(dimensions,2)==3
     twoDimensions=false;
@@ -12,7 +11,7 @@ function [map, figureHandle] = generateMap(listOfObstacles, dimensions, display,
   endif
   for ob = 1:size(listOfObstacles, 2)
     mapCoordinates = convertCoordinateToMap(listOfObstacles(:,ob), map, resolution, twoDimensions);
-    map(mapCoordinates(1), mapCoordinates(2), mapCoordinates(3)) = 1;
+    map(mapCoordinates(1), mapCoordinates(2), mapCoordinates(3)) = 2;
   endfor
   if(display)
     figureHandle=plotMap(map, listOfObstacles, dimensions, resolution, twoDimensions);
