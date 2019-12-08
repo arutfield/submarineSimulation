@@ -19,27 +19,27 @@ function expandedObstaclesMap = generateExpandedObstaclesMap(map, submarineLocat
       for d=1:mapSizes(3)
         spot = map(r,c,d);
         if (spot==2)
-          rowRange_min = r-submarineDimensions(2)*scale;
+          rowRange_min = r-round(submarineDimensions(2)*scale);
           if (rowRange_min < 1)
             rowRange_min = 1;
           endif
-          rowRange_max = r+submarineDimensions(2)*scale;
+          rowRange_max = r+round(submarineDimensions(2)*scale);
           if (rowRange_max > mapSizes(1))
             rowRange_max = mapSizes(1);
           endif
-          colRange_min = c-submarineDimensions(1)*scale;
+          colRange_min = c-round(submarineDimensions(1)*scale);
           if (colRange_min < 1)
             colRange_min = 1;
           endif
-          colRange_max = c+submarineDimensions(1)*scale;
+          colRange_max = c+round(submarineDimensions(1)*scale);
           if (colRange_max > mapSizes(2))
             colRange_max = mapSizes(2);
           endif
-          depthRange_min = d-submarineDimensions(3)*scale;
+          depthRange_min = d-round(submarineDimensions(3)*scale);
           if (depthRange_min < 1)
             depthRange_min = 1;
           endif
-          depthRange_max = d+submarineDimensions(3)*scale;
+          depthRange_max = d+round(submarineDimensions(3)*scale);
           if (depthRange_max > mapSizes(3))
             depthRange_max = mapSizes(3);
           endif

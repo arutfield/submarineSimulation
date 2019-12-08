@@ -31,7 +31,6 @@ submarineStartPoint(3)+z_edgeToCenter, submarineStartPoint(3)-z_edgeToCenter,...
 submarineStartPoint(3)+z_edgeToCenter, submarineStartPoint(3)-z_edgeToCenter,...
 submarineStartPoint(3)+z_edgeToCenter, submarineStartPoint(3)-z_edgeToCenter];
 
-%testCorner = [submarineStartPoint(1)+x_edgeToCenter; submarineStartPoint(2)+y_edgeToCenter; submarineStartPoint(3)+z_edgeToCenter];
 
 cornersMap = zeros(size(corners));
 for k=1:size(corners,2)

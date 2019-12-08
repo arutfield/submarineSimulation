@@ -6,6 +6,12 @@ function path = generateWaveformPath(startPoint, finishPoint, map, resolution)
   endif
   startPointMap = convertCoordinateToMap(startPoint, map, resolution);
   finishPointMap = convertCoordinateToMap(finishPoint, map, resolution);
+  if (map(startPointMap(1), startPointMap(2), startPointMap(3))==2)
+    error(['start point is an obstacle']);
+  endif
+  if (map(finishPointMap(1), finishPointMap(2), finishPointMap(3))==2)
+    error(['finish point is an obstacle']);
+  endif
   pointMap(startPointMap(1), startPointMap(2), startPointMap(3)) = -1;
   pointMap(finishPointMap(1), finishPointMap(2), finishPointMap(3)) = 1;
   % set obstacles on point map
@@ -41,6 +47,7 @@ function path = generateWaveformPath(startPoint, finishPoint, map, resolution)
            pointsToExpand = []; %clear points
            break;
          else
+         % set this point's score if not already set and add to points to look through
          if pointMap(focusPoint(1)+v, focusPoint(2)+k, focusPoint(3)+l) == 0
            pointMap(focusPoint(1)+v, focusPoint(2)+k, focusPoint(3)+l) = score;
            pointsToExpand = [pointsToExpand [focusPoint(1)+v; focusPoint(2)+k; focusPoint(3)+l]];
@@ -49,17 +56,19 @@ function path = generateWaveformPath(startPoint, finishPoint, map, resolution)
        endfor
      endfor
    endfor
+   % make sure some points are left and remove the current point since you're done with it
    if size(pointsToExpand,2) < 2
      break;
    endif
    pointsToExpand = pointsToExpand(:,2:end);
   endwhile 
-  %disp(pointMap);
+
+  % if failed, return empty path
   path = [];
   if (!success)
     return;
   endif
-  breakCount=0;
+
   path = startPointMap;
   currentPointMap = startPointMap;
   bestSpotValue=prod(size(map));
@@ -67,8 +76,10 @@ function path = generateWaveformPath(startPoint, finishPoint, map, resolution)
   while (currentPointMap(1) != finishPointMap(1)...
     || currentPointMap(2) != finishPointMap(2)...
     || currentPointMap(3) != finishPointMap(3))
-  %get path
-  nextSpot = zeros(3,1);
+    %get path
+    nextSpot = zeros(3,1);
+    edited=false;
+    % iterate through neighboring points
     for r=-1:1
       if currentPointMap(1)+r < 1 || currentPointMap(1)+r > size(pointMap,1)
            continue;
@@ -93,16 +104,19 @@ function path = generateWaveformPath(startPoint, finishPoint, map, resolution)
             || pointMap(currentPointMap(1), currentPointMap(2), currentPointMap(3)) == -1)
             bestSpotValue = pointMap(pointToCheck(1), pointToCheck(2), pointToCheck(3));
             nextSpot = pointToCheck;
+            edited = true;
           endif
         endfor
       endfor
     endfor
-    path = [path nextSpot];
-    currentPointMap = nextSpot;
-    breakCount++;
-    if (breakCount > 1000)
-      return;
+    if (edited)
+      path = [path nextSpot];
     endif
+    currentPointMap = nextSpot;
+ %   breakCount++;
+ %   if (breakCount > 1000)
+ %     return;
+ %   endif
   endwhile
   
 endfunction

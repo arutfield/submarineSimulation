@@ -1,5 +1,4 @@
 function figureHandle=plotKnownMap(knownMap, resolution, figureHandle=0)
-%resolution = 0.5;
 twoDimensions=true;
 if size(knownMap,3)>1
   twoDimensions=false;
@@ -11,9 +10,7 @@ if (figureHandle == 0)
 else
   figure(figureHandle);
 endif
-if (twoDimensions)
-  set(gca, 'Color', 'k');
-endif
+set(gca, 'Color', 'k');
 hold on;
 axisVector=[];
 for d=1:2
@@ -29,16 +26,14 @@ else
   map = zeros(dimensions(1), dimensions(2), dimensions(3));
 endif
 shiftValue = 0.5*resolution;
-%spot = 1;
 for y = 1:size(knownMap, 1)
   for x = 1:size(knownMap, 2)
     for z = 1:size(knownMap, 3)
         value = knownMap(y, x, z);
-        if (value == 0 && twoDimensions) || (value == 1 && !twoDimensions)
+        if (value == 0)
            continue;
         endif
 
-      %disp(['Spot: ', num2str(spot)]);
       coordinatePoint = convertMapToCoordinate([y x z]', knownMap, resolution);
       x_c=coordinatePoint(1);
       y_c=coordinatePoint(2);
@@ -58,17 +53,16 @@ for y = 1:size(knownMap, 1)
           end
       else
         switch value
-          case 0
-            drawCube([x_c y_c z_c resolution 0 0 0], 'FaceColor', 'k');
+          case 1
+            drawCube([x_c y_c z_c resolution 0 0 0], 'FaceColor', 'w', 'EdgeColor', 'None');
           case 2
-            drawCube([x_c y_c z_c resolution 0 0 0], 'FaceColor', 'r');
+            drawCube([x_c y_c z_c resolution 0 0 0], 'FaceColor', 'r', 'EdgeColor', 'None');
           case 3
-            drawCube([x_c y_c z_c resolution 0 0 0], 'FaceColor', 'g');
+            drawCube([x_c y_c z_c resolution 0 0 0], 'FaceColor', 'g', 'EdgeColor', 'None');
           otherwise
             error(["unknown value: ", num2str(value)]);
           end
       endif
-      %spot++;
     endfor
   endfor
 endfor
