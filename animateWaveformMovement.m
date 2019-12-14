@@ -1,10 +1,10 @@
-function [knownMap, figureHandle, totalTime] = animateWaveformMovement(knownMap, fullMap, wavefrontPathMap, submarineDimensions, flashlightRange, resolution, maxSpeed, acceleration, deceleration);
+function [knownMap, figureHandle, totalTime, finalSubPosition] = animateWaveformMovement(knownMap, fullMap, wavefrontPathMap, submarineDimensions, flashlightRange, resolution, maxSpeed, acceleration, deceleration);
   twoDimensions=true;
   if size(knownMap,3)>1
     twoDimensions=false;
   endif
   dimensions=size(knownMap);
-  figureHandle=plotKnownMap(knownMap, resolution);
+  [figureHandle, oldSubHandles]=plotKnownMap(knownMap, resolution, []);
   set(gca, 'Color', 'k');
   hold on;
   axisVector=[];
@@ -25,6 +25,7 @@ function [knownMap, figureHandle, totalTime] = animateWaveformMovement(knownMap,
   for k=2:size(wavefrontPath,2)
     [trajectory, time]=generateTrapezoidalTrajectory(wavefrontPath(:,k-1),...
     wavefrontPath(:,k), maxSpeed, acceleration, deceleration);
+    % check that trajectory 
     for m=1:size(trajectory,2)
       subPosition = trajectory(:,m);
       subPositionMap = convertCoordinateToMap(subPosition, knownMap, resolution);
@@ -32,26 +33,31 @@ function [knownMap, figureHandle, totalTime] = animateWaveformMovement(knownMap,
         continue;
       endif
       [knownMap, newLocations ]=updateMap(fullMap, knownMap, subPosition, submarineDimensions, flashlightRange, resolution);
-      plotUpdatedMap(knownMap, resolution, dimensions, twoDimensions, newLocations);
+      [~, oldSubHandles]=plotUpdatedMap(knownMap, resolution, dimensions, twoDimensions, newLocations, oldSubHandles);
       pause(0.01);
       prevPositionMap = subPositionMap;
     endfor
     totalTime = totalTime + time(end);
   endfor
-  
+  finalSubPosition = subPosition;
 endfunction
 
 
-function figureHandle=plotUpdatedMap(knownMap, resolution, dimensions, twoDimensions, newLocations)
-  if(twoDimensions)
-  map = zeros(dimensions(1), dimensions(2));  
-else
-  map = zeros(dimensions(1), dimensions(2), dimensions(3));
-endif
+function [figureHandle, submarineHandles]=plotUpdatedMap(knownMap, resolution, dimensions, twoDimensions, newLocations, oldSubmarineHandles)
+%  if(twoDimensions)
+%  map = zeros(dimensions(1), dimensions(2));  
+%else
+%  map = zeros(dimensions(1), dimensions(2), dimensions(3));
+%endif
 
 % move sub
-
-
+if (!twoDimensions)
+  for k=1:length(oldSubmarineHandles)
+    delete(oldSubmarineHandles(k));
+  endfor
+endif
+subIndex=1;
+submarineHandles = [];
 shiftValue = 0.5*resolution;
 for k = 1:size(newLocations, 2)
       y=newLocations(1,k);
@@ -82,11 +88,12 @@ for k = 1:size(newLocations, 2)
       else
         switch value
           case 1
-            drawCube([x_c y_c z_c resolution 0 0 0], 'FaceColor', 'w', 'EdgeColor', 'None');
+            drawCube([x_c y_c z_c resolution/2 0 0 0], 'FaceColor', 'w', 'EdgeColor', 'None');
           case 2
             drawCube([x_c y_c z_c resolution 0 0 0], 'FaceColor', 'r', 'EdgeColor', 'None');
           case 3
-            drawCube([x_c y_c z_c resolution 0 0 0], 'FaceColor', 'g', 'EdgeColor', 'None');
+            submarineHandles(subIndex) = drawCube([x_c y_c z_c resolution 0 0 0], 'FaceColor', 'g', 'EdgeColor', 'None');
+            subIndex++;
           otherwise
             error(["unknown value: ", num2str(value)]);
           end

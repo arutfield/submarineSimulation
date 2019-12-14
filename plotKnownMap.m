@@ -1,14 +1,14 @@
-function figureHandle=plotKnownMap(knownMap, resolution, figureHandle=0)
+function [figureHandle, submarineHandles]=plotKnownMap(knownMap, resolution, oldSubmarineHandles, figureHandle=0)
 twoDimensions=true;
 if size(knownMap,3)>1
   twoDimensions=false;
 endif
 dimensions=size(knownMap);
-
+submarineHandles = [];
 if (figureHandle == 0)
-  figureHandle=figure;
+  figureHandle=  figure('position', [500 500, 1000, 1000]);;
 else
-  figure(figureHandle);
+  figure(figureHandle, 'position', [500 500, 1000, 1000]);
 endif
 set(gca, 'Color', 'k');
 hold on;
@@ -20,11 +20,17 @@ if !twoDimensions
   axisVector = [axisVector -dimensions(3)*resolution 0];
 endif
 axis(axisVector);
-if(twoDimensions)
-  map = zeros(dimensions(1), dimensions(2));  
-else
-  map = zeros(dimensions(1), dimensions(2), dimensions(3));
+%if(twoDimensions)
+%  map = zeros(dimensions(1), dimensions(2));  
+%else
+%  map = zeros(dimensions(1), dimensions(2), dimensions(3));
+%endif
+if (!twoDimensions)
+  for k=1:length(oldSubmarineHandles)
+    delete(oldSubmarineHandles(k));
+  endfor
 endif
+subIndex=1;
 shiftValue = 0.5*resolution;
 for y = 1:size(knownMap, 1)
   for x = 1:size(knownMap, 2)
@@ -54,11 +60,12 @@ for y = 1:size(knownMap, 1)
       else
         switch value
           case 1
-            drawCube([x_c y_c z_c resolution 0 0 0], 'FaceColor', 'w', 'EdgeColor', 'None');
+            drawCube([x_c y_c z_c resolution/2 0 0 0], 'FaceColor', 'w', 'EdgeColor', 'None');
           case 2
             drawCube([x_c y_c z_c resolution 0 0 0], 'FaceColor', 'r', 'EdgeColor', 'None');
           case 3
-            drawCube([x_c y_c z_c resolution 0 0 0], 'FaceColor', 'g', 'EdgeColor', 'None');
+            submarineHandles(subIndex) = drawCube([x_c y_c z_c resolution 0 0 0], 'FaceColor', 'g', 'EdgeColor', 'None');
+            subIndex++;
           otherwise
             error(["unknown value: ", num2str(value)]);
           end
