@@ -1,4 +1,4 @@
-function [updatedMap, newSpots] = updateMap(obstacleMap, knownMap, submarineStartPoint, submarineDimensions, flashlightRange, resolution)
+function [updatedMap, expandedObstaclesMap, newSpots] = updateMap(obstacleMap, knownMap, submarineStartPoint, submarineDimensions, flashlightRange, resolution)
   updatedMap = knownMap;
   submarineStartMapPoint = convertCoordinateToMap(submarineStartPoint, obstacleMap, resolution);
   disp(['Submarine start point: ', num2str(submarineStartPoint'), ', converted to map: ', num2str(submarineStartMapPoint')]);
@@ -156,7 +156,7 @@ endfor
     endfor
   endfor
   disp(['Spots checked: ', num2str(spots)]);
-  
+  expandedObstaclesMap = generateExpandedObstaclesMap(updatedMap, submarineStartPoint, submarineDimensions, resolution);
 end
 
 

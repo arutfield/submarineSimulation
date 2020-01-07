@@ -29,7 +29,7 @@ function path = generateWaveformPath(startPoint, finishPoint, map, resolution)
   success = false;
   while (!success)
    focusPoint = pointsToExpand(:,1);
-   score = pointMap(focusPoint(1), focusPoint(2), focusPoint(3))+1;
+   %score = pointMap(focusPoint(1), focusPoint(2), focusPoint(3))+1;
    for v=-1:1
          if focusPoint(1)+v < 1 || focusPoint(1)+v > size(pointMap,1)
            continue;
@@ -48,7 +48,9 @@ function path = generateWaveformPath(startPoint, finishPoint, map, resolution)
            break;
          else
          % set this point's score if not already set and add to points to look through
-         if pointMap(focusPoint(1)+v, focusPoint(2)+k, focusPoint(3)+l) == 0
+         score = norm([v, k, l]) + pointMap(focusPoint(1), focusPoint(2), focusPoint(3));
+         if (pointMap(focusPoint(1)+v, focusPoint(2)+k, focusPoint(3)+l) == 0 ||...
+           score < pointMap(focusPoint(1)+v, focusPoint(2)+k, focusPoint(3)+l))
            pointMap(focusPoint(1)+v, focusPoint(2)+k, focusPoint(3)+l) = score;
            pointsToExpand = [pointsToExpand [focusPoint(1)+v; focusPoint(2)+k; focusPoint(3)+l]];
          endif
