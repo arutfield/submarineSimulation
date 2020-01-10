@@ -1,4 +1,4 @@
-function [knownMap, figureHandle, totalTime, finalSubPosition, success] = animateWaveformMovement(knownMap, fullMap, expandedObstaclesMap, wavefrontPathMap, submarineDimensions, flashlightRange, resolution, maxSpeed, acceleration, deceleration);
+function [knownMap, expandedObstaclesMap, figureHandle, totalTime, finalSubPosition, success] = animateWaveformMovement(knownMap, fullMap, expandedObstaclesMap, wavefrontPathMap, submarineDimensions, flashlightRange, resolution, maxSpeed, acceleration, deceleration);
   success=true;
   twoDimensions=true;
   if size(knownMap,3)>1
@@ -30,6 +30,17 @@ function [knownMap, figureHandle, totalTime, finalSubPosition, success] = animat
     for s=1:size(trajectory,2)
       trajectoryMap(:,s) = convertCoordinateToMap(trajectory(:,s), knownMap, resolution);
     endfor
+
+    % check if waypoint still clear. Otherwise, stop and return
+    if (!waypointStillClear(expandedObstaclesMap, trajectoryMap, 1))
+      disp(['Obstacle found, stopping between waypoints']);
+      finalSubPosition = subPosition;
+      success=false;
+      disp(['Leaving between waypoints, final position: ', num2str(finalSubPosition')]);
+      return;
+    endif
+    
+    
     % check that trajectory 
     for m=1:size(trajectory,2)
       subPosition = trajectory(:,m);
@@ -37,6 +48,10 @@ function [knownMap, figureHandle, totalTime, finalSubPosition, success] = animat
       if (isequal(subPositionMap, prevPositionMap))
         continue;
       endif
+
+      [knownMap, expandedObstaclesMap, newLocations ]=updateMap(fullMap, knownMap, subPosition, submarineDimensions, flashlightRange, resolution);
+      [~, oldSubHandles]=plotUpdatedMap(knownMap, resolution, dimensions, twoDimensions, newLocations, oldSubHandles);
+
       
       % check if waypoint still clear. Otherwise, slow to stop and return
       if (!waypointStillClear(expandedObstaclesMap, trajectoryMap, m))
@@ -47,7 +62,7 @@ function [knownMap, figureHandle, totalTime, finalSubPosition, success] = animat
           if (m < size(trajectory,2)-1)
             currentSpeed = norm([trajectory(:,m+1)-trajectory(:,m)])/0.01;
           else
-            error(['Trajecotry has only one point']);
+            error(['Trajectory has only one point']);
           endif
         endif
         originalPosition = subPosition;
@@ -60,7 +75,7 @@ function [knownMap, figureHandle, totalTime, finalSubPosition, success] = animat
           if (isequal(subPositionMap, prevPositionMap))
             continue;
           endif
-          [knownMap, newLocations ]=updateMap(fullMap, knownMap, subPosition, submarineDimensions, flashlightRange, resolution);
+          [knownMap,  expandedObstaclesMap, newLocations ]=updateMap(fullMap, knownMap, subPosition, submarineDimensions, flashlightRange, resolution);
           [~, oldSubHandles]=plotUpdatedMap(knownMap, resolution, dimensions, twoDimensions, newLocations, oldSubHandles);
           pause(0.01);
           prevPositionMap = subPositionMap;
@@ -68,10 +83,10 @@ function [knownMap, figureHandle, totalTime, finalSubPosition, success] = animat
         endfor
         finalSubPosition = subPosition;
         success=false;
+        disp(['Leaving early, final position: ', num2str(finalSubPosition'),...
+        ', required stopping distance: ', num2str(norm(stoppingTrajectory(:,1)-stoppingTrajectory(:,end)))]);
         return;
       endif
-      [knownMap, expandedObstaclesMap, newLocations ]=updateMap(fullMap, knownMap, subPosition, submarineDimensions, flashlightRange, resolution);
-      [~, oldSubHandles]=plotUpdatedMap(knownMap, resolution, dimensions, twoDimensions, newLocations, oldSubHandles);
       pause(0.01);
       
       prevPositionMap = subPositionMap;
@@ -83,11 +98,6 @@ endfunction
 
 
 function [figureHandle, submarineHandles]=plotUpdatedMap(knownMap, resolution, dimensions, twoDimensions, newLocations, oldSubmarineHandles)
-%  if(twoDimensions)
-%  map = zeros(dimensions(1), dimensions(2));  
-%else
-%  map = zeros(dimensions(1), dimensions(2), dimensions(3));
-%endif
 
 % move sub
 if (!twoDimensions)
@@ -102,11 +112,11 @@ for k = 1:size(newLocations, 2)
       y=newLocations(1,k);
       x=newLocations(2,k);
       z=newLocations(3,k);
+      disp(['point to convert: ', num2str([y x z])]);
       value = knownMap(y, x, z);
       if (value == 0)
         continue;
       endif
-      
       coordinatePoint = convertMapToCoordinate([y x z]', knownMap, resolution);
       x_c=coordinatePoint(1);
       y_c=coordinatePoint(2);
@@ -166,7 +176,7 @@ function [clearSpot] = waypointStillClear(expandedObstaclesMap, trajectoryMap, m
   clearSpot = true;
   trajectorySize = size(trajectoryMap, 2);
   for k=m:trajectorySize
-    if (expandedObstaclesMap(trajectoryMap(1,m), trajectoryMap(2,m), trajectoryMap(3,m)) == 2)
+    if (expandedObstaclesMap(trajectoryMap(1,k), trajectoryMap(2,k), trajectoryMap(3,k)) == 2)
       clearSpot = false;
       return;
     endif
