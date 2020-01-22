@@ -1,6 +1,6 @@
 function figureHandle = plotFrontierMap(map, frontier, centroid, resolution)
   mapSizes = [size(map, 1) size(map, 2) size(map, 3)];
-  figureHandle = plotKnownMap(map, resolution);
+  figureHandle = plotKnownMap(map, resolution, []);
   figure(figureHandle);
   hold on;
   shiftValue = 0.25*resolution;

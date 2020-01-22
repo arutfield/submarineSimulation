@@ -23,7 +23,7 @@ else
   disp(["failed pt2 conversion: , ", num2str(testPt2'), ", ", num2str(testPt2Return')]);
 endif
 
-startPoint1=[-1 0.5 0]';
+startPoint1=[-2 2 0]';
 finishPoint1=[2 2.5 0]';
 wavePath1 = generateWaveformPath(startPoint1, finishPoint1, map, resolution);
 
@@ -35,7 +35,7 @@ startPoint1_3d = [-1.5 1 -0.5]';
 finishPoint1_3d = [1.5 2 -3.5]';
 wavePath1_3d = generateWaveformPath(startPoint1_3d, finishPoint1_3d, map3D, resolution);
 
-startPoint2_3d = [1.5 -2 -5.5]';
+startPoint2_3d = [-1 -2 -3.5]';
 finishPoint2_3d = [-1.5 2 -0.5]';
 wavePath2_3d = generateWaveformPath(startPoint2_3d, finishPoint2_3d, map3D, resolution);
 

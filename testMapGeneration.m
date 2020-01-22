@@ -10,9 +10,9 @@ obstacles = [-5 2 3 -6 -5  5  2  2 1 5 5 6 7 -1  3 4 -3 -2 -3 5 -4  7 -6  4 -4 1
 dimensions2D = [19 17];
 [map, figureHandle2DMap] = generateMap(obstacles, dimensions2D, false, resolution);
 initialUnknownMap = generateUnknownMap(map, [0 0 0]', [4 2 0], 5, resolution);
-figureHandle = plotKnownMap(initialUnknownMap, resolution);
+figureHandle = plotKnownMap(initialUnknownMap, resolution, []);
 unknownMapUpdated = updateMap(map, initialUnknownMap, [1.5 2 0]', [4 2 0], 5, resolution);
-figureHandleUpdated = plotKnownMap(unknownMapUpdated, resolution);
+figureHandleUpdated = plotKnownMap(unknownMapUpdated, resolution, []);
 
 
 
@@ -30,6 +30,6 @@ obstacles3D = [0.5  2.5  1.5  0.5 -1.5  1.5  1.5  1.5  ;...
 submarineDimensions3D = [4 2 1];
 [map3D, figureHandle3DMap] = generateMap(obstacles3D, [6 7 8], false, resolution);
 initialUnknownMap3D = generateUnknownMap(map3D, [0 0 -1]', submarineDimensions3D, 5, resolution);
-figureHandle3D = plotKnownMap(initialUnknownMap3D, resolution);
+figureHandle3D = plotKnownMap(initialUnknownMap3D, resolution, []);
 unknownMapUpdated3D = updateMap(map3D, initialUnknownMap3D, [-1 2 -4]', submarineDimensions3D, 5, resolution);
-figureHandleUpdated3D = plotKnownMap(unknownMapUpdated3D, resolution);
+figureHandleUpdated3D = plotKnownMap(unknownMapUpdated3D, resolution, []);
