@@ -20,11 +20,6 @@ if !twoDimensions
   axisVector = [axisVector -dimensions(3)*resolution 0];
 endif
 axis(axisVector);
-%if(twoDimensions)
-%  map = zeros(dimensions(1), dimensions(2));  
-%else
-%  map = zeros(dimensions(1), dimensions(2), dimensions(3));
-%endif
 if (!twoDimensions)
   for k=1:length(oldSubmarineHandles)
     delete(oldSubmarineHandles(k));

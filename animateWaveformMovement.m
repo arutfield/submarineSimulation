@@ -111,6 +111,12 @@ endif
 subIndex=1;
 submarineHandles = [];
 shiftValue = 0.5*resolution;
+
+disp(['plotUpdatedMap-newLocations size-', num2str(length(newLocations))]);
+subCell=0;
+% filter new locations
+newLocations = unique(newLocations', "rows", "first");
+newLocations = newLocations';
 for k = 1:size(newLocations, 2)
       y=newLocations(1,k);
       x=newLocations(2,k);
@@ -134,6 +140,8 @@ for k = 1:size(newLocations, 2)
             fill(x_vect, y_vect, 'r', 'EdgeColor', 'None');
           case 3
             fill(x_vect, y_vect, 'g', 'EdgeColor', 'None');
+            disp(['plotUpdatedMap: sub cell:', num2str(newLocations(:,k)')]);
+            subCell++;
           otherwise
             error(["unknown value: ", num2str(value)]);
           end
@@ -151,6 +159,7 @@ for k = 1:size(newLocations, 2)
           end
       endif
 endfor
+disp(['plotUpdatedMap-number of sub cells: ', num2str(subCell)]);
 endfunction
 
 

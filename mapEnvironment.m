@@ -1,19 +1,23 @@
-function [success] = mapEnvironment(fullMap, submarineLocation, resolution)
+function [success, knownMap] = mapEnvironment(fullMap, resolution)
   success = false;
   loadSubmarineSpecifications;
-  submarineDimensions = [submarineLength submarineWidth submarineHeight];
+  submarineDimensions = [submarineLength submarineHeight, submarineWidth];
+  origin = zeros(3,1);
+knownMap = generateUnknownMap(fullMap, origin, submarineDimensions,...
+ submarineLightDistance, resolution);
+knownMapHandle = plotKnownMap(knownMap, resolution, []);
+expandedObstaclesMap = generateExpandedObstaclesMap(knownMap, origin, submarineDimensions, resolution);
+plotKnownMap(expandedObstaclesMap, resolution);
+nextPoint = findFrontierCentroid(knownMap);
+wavePathMap = generateWaveformPath(origin, nextPoint, expandedObstaclesMap, resolution);
+a=figure;
+figure(a, 'position', get(0,"screensize"));%[500 500, 1000, 1000]);
 
 
-  
-  unknownMap = generateUnknownMap(fullMap, submarineLocation, submarineDimensions,...
-    submarineLightDistance, resolution);
-  unknownMap3DHandle = plotKnownMap(unknownMap3D, resolution, []);
-  expandedObstaclesMap = generateExpandedObstaclesMap(unknownMap, submarineLocation,...
-  submarineDimensions, resolution);
-
-
-
-  [knownMap, figureHandle, totalTime, finalSubPosition] = animateWaveformMovement(knownMap, fullMap,...
-    wavefrontPathMap, submarineDimensions, submarineLightDistance, resolution, submarineMaximumSpeed...
-    , submarineAcceleration, submarineDeceleration);
+%set(gcf, 'Position',  [0, 0, 1200, 1200]);
+[finalMap, expandedObstaclesMap, figureHandle2D, totalTime]=animateWaveformMovement...
+(knownMap, fullMap, expandedObstaclesMap, wavePathMap, submarineDimensions, [],...
+ submarineLightDistance, resolution, submarineMaximumSpeed, submarineAcceleration, submarineDeceleration, a);
 endfunction
+
+%maxSpeed, acceleration, deceleration, figureHandle

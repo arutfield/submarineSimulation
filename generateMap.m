@@ -5,9 +5,9 @@ function [map, figureHandle] = generateMap(listOfObstacles, dimensions, display,
   endif
   figureHandle=0;
   if(twoDimensions)
-    map = zeros(round(dimensions(2)/resolution), round(dimensions(1)/resolution));  
+    map = ones(round(dimensions(2)/resolution), round(dimensions(1)/resolution));  
   else
-    map = zeros(round(dimensions(2)/resolution), round(dimensions(1)/resolution), round(dimensions(3)/resolution));
+    map = ones(round(dimensions(2)/resolution), round(dimensions(1)/resolution), round(dimensions(3)/resolution));
   endif
   for ob = 1:size(listOfObstacles, 2)
     mapCoordinates = convertCoordinateToMap(listOfObstacles(:,ob), map, resolution, twoDimensions);

@@ -1,11 +1,11 @@
 function [updatedMap, expandedObstaclesMap, newSpots] = updateMap(obstacleMap, knownMap, submarineStartPoint, submarineDimensions, flashlightRange, resolution)
   updatedMap = knownMap;
   submarineStartMapPoint = convertCoordinateToMap(submarineStartPoint, obstacleMap, resolution);
-  disp(['Submarine start point: ', num2str(submarineStartPoint'), ', converted to map: ', num2str(submarineStartMapPoint')]);
+  disp(['updateMap-Submarine start point: ', num2str(submarineStartPoint'), ', converted to map: ', num2str(submarineStartMapPoint')]);
   newSpots=[];
 
-  if (obstacleMap(submarineStartMapPoint(1), submarineStartMapPoint(2), submarineStartMapPoint(3)) != 0)
-    error("start point is an obstacle");
+  if (obstacleMap(submarineStartMapPoint(1), submarineStartMapPoint(2), submarineStartMapPoint(3)) == 2)
+    error("updateMap-start point is an obstacle");
   endif
   % remove original sub
   for r=1:size(knownMap,1)
@@ -13,12 +13,13 @@ function [updatedMap, expandedObstaclesMap, newSpots] = updateMap(obstacleMap, k
       for d=1:size(knownMap,3)
         if (knownMap(r,c,d)==3)
           updatedMap(r,c,d)=obstacleMap(r,c,d);
+          disp(['updateMap-Former sub spot removed: ', num2str([r c d])]);
           newSpots = [newSpots [r; c; d]];
         endif
       endfor
     endfor
   endfor
-  
+  disp(["updateMap-", num2str(length(newSpots)), " old sub spots found"]);
   
   % sub knows area flashlight distance in every direction + sub dimension/2
   % dimension is length (along x) followed by width (along y) then depth (along z)
@@ -47,7 +48,7 @@ endfor
 for r=1:size(corners,1)
   for c=1:size(corners, 2)
     if (cornersMap(r,c) < 1 || cornersMap(r,c) > size(obstacleMap, r))
-      error(["corner off board: ", num2str(r), ",", num2str(c)]);
+      error(["updateMap-corner off board: ", num2str(r), ",", num2str(c)]);
     endif
   endfor
 endfor
@@ -62,8 +63,8 @@ endfor
         x = pointOnMap(2);
         z = pointOnMap(3);
         
-        if (obstacleMap(y, x, z) != 0)
-          error("point is an obstacle, no room for a sub");
+        if (obstacleMap(y, x, z) == 2)
+          error("updateMap-point is an obstacle, no room for a sub");
         else
           updatedMap(y, x, z)=3;
           newSpots = [newSpots [y; x; z]];
@@ -155,7 +156,7 @@ endfor
       endfor
     endfor
   endfor
-  disp(['Spots checked: ', num2str(spots)]);
+  disp(['updateMap-new spots found: ', num2str(length(newSpots))]);
   expandedObstaclesMap = generateExpandedObstaclesMap(updatedMap, submarineStartPoint, submarineDimensions, resolution);
 end
 
@@ -201,7 +202,7 @@ allclear = false;
          updatedMap(pointToCheckMap(1), pointToCheckMap(2), pointToCheckMap(3)) = obstacleMap(pointToCheckMap(1), pointToCheckMap(2), pointToCheckMap(3));
          newSpots = [newSpots [pointToCheckMap(1); pointToCheckMap(2); pointToCheckMap(3)]];
        endif
-       if (obstacleMap(pointToCheckMap(1), pointToCheckMap(2), pointToCheckMap(3)) > 0 ||...
+       if (obstacleMap(pointToCheckMap(1), pointToCheckMap(2), pointToCheckMap(3)) > 1 ||...
          (pointToCheck(1) > maxOfCorners(2,1) && pointToCheck(1) < maxOfCorners(1,1) &&...
          pointToCheck(2) > maxOfCorners(2,2) && pointToCheck(2) < maxOfCorners(1,2) &&...
          pointToCheck(3) > maxOfCorners(2,3) && pointToCheck(3) < maxOfCorners(1,3)))

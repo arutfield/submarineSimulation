@@ -1,36 +1,49 @@
-  function allObstacles = generateObstacles(threeDimensions, sideLengths)
+  function allObstacles = generateObstacles(sideLengths, distanceFromSubOrigin, resolution, visual, test=false)
     %clear; clc; close all;
-    if length(sideLengths) != 3 && threeDimensions
-      error("number of lengths must be 3 if three dimensions");
-    else
-      if length(sideLengths) != 2 && !threeDimensions
-        error ("number of lengths must be 2 if two dimensions");
-      endif
+    if (visual)
+      figure;
+      hold on;
+      axisVector=[];
+      allObstacles = [];
     endif
-    figure;
-    hold on;
-    axisVector=[];
-    allObstacles = [];
     for d=1:2
       axisVector = [axisVector -sideLengths(d)/2 sideLengths(d)/2];
     endfor
-    if threeDimensions
+    if length(sideLengths) > 2
       axisVector = [axisVector -sideLengths(3) 0];
     endif
-    axis(axisVector);
-    numberOfObstacles = round(rand*prod(sideLengths)*0.2);
+    if (visual)
+      axis(axisVector);
+    endif
+    numberOfObstacles = round(rand*prod(sideLengths)*0.01/resolution);
+    if (test)
+      numberOfObstacles=1000;
+    endif
+    disp(["number of obstacles: ", num2str(numberOfObstacles)]);
+    
     for k=1:numberOfObstacles
-      obstacleCenterX = round(rand*(sideLengths(1)-1)) - (sideLengths(1)-1)/2;
+      obstacleCenterX = (rand*(sideLengths(1)/2-0.5))*(-1)^(round(rand-1));
       obstacleX = [obstacleCenterX-0.5 obstacleCenterX-0.5 obstacleCenterX+0.5 obstacleCenterX+0.5];
-      obstacleCenterY = round(rand*(sideLengths(2)-1)) - (sideLengths(2)-1)/2;
+      obstacleCenterY = (rand*(sideLengths(2)/2-0.5))*(-1)^(round(rand-1));
       obstacleY = [obstacleCenterY-0.5 obstacleCenterY+0.5 obstacleCenterY+0.5 obstacleCenterY-0.5];
-      if !threeDimensions
-        fill(obstacleX, obstacleY, 'r');
+      
+      if (length(sideLengths) < 3)
+        if norm([obstacleX obstacleY])<distanceFromSubOrigin
+          continue;
+        endif
+        if (visual)
+          fill(obstacleX, obstacleY, 'r');
+        endif
         allObstacles = [allObstacles [obstacleCenterX; obstacleCenterY; 0]];
       else
-        obstacleCenterZ = -round(rand*(sideLengths(3)-1))-0.5;
+        obstacleCenterZ = -rand*(sideLengths(3)-1)-0.5;
         obstacleZ = [obstacleCenterZ-0.5 obstacleCenterZ-0.5 obstacleCenterZ+0.5 obstacleCenterZ+0.5];
-        drawCube([obstacleCenterX obstacleCenterY obstacleCenterZ 1 0 0 0], 'FaceColor', 'r');
+        if norm([obstacleX obstacleY obstacleZ])<distanceFromSubOrigin
+          continue;
+        endif
+        if (visual)
+          drawCube([obstacleCenterX obstacleCenterY obstacleCenterZ 0.5 0 0 0], 'FaceColor', 'r');
+        endif
         allObstacles = [allObstacles [obstacleCenterX; obstacleCenterY; obstacleCenterZ]];
       endif
     endfor

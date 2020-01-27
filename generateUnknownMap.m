@@ -5,7 +5,7 @@ function [updatedMap]= generateUnknownMap(obstacleMap, submarineStartPoint, subm
   updatedMap = zeros(size(obstacleMap));
   submarineStartMapPoint = convertCoordinateToMap(submarineStartPoint, obstacleMap, resolution);
   disp(['Submarine start point: ', num2str(submarineStartPoint'), ', converted to map: ', num2str(submarineStartMapPoint')]);
-  if (obstacleMap(submarineStartMapPoint(1), submarineStartMapPoint(2), submarineStartMapPoint(3)) != 0)
+  if (obstacleMap(submarineStartMapPoint(1), submarineStartMapPoint(2), submarineStartMapPoint(3)) == 2)
     error("start point is an obstacle");
   endif
   
@@ -54,7 +54,7 @@ endfor
         x = pointOnMap(2);
         z = pointOnMap(3);
         
-        if (obstacleMap(y, x, z) != 0)
+        if (obstacleMap(y, x, z) == 2)
           error("point is an obstacle, no room for a sub");
         else
           updatedMap(y, x, z)=3;
@@ -188,7 +188,7 @@ allclear = false;
        if (updatedMap(pointToCheckMap(1), pointToCheckMap(2), pointToCheckMap(3)) == 0)
          updatedMap(pointToCheckMap(1), pointToCheckMap(2), pointToCheckMap(3)) = obstacleMap(pointToCheckMap(1), pointToCheckMap(2), pointToCheckMap(3));
        endif
-       if (obstacleMap(pointToCheckMap(1), pointToCheckMap(2), pointToCheckMap(3)) > 0 ||...
+       if (obstacleMap(pointToCheckMap(1), pointToCheckMap(2), pointToCheckMap(3)) > 1 ||...
          (pointToCheck(1) > maxOfCorners(2,1) && pointToCheck(1) < maxOfCorners(1,1) &&...
          pointToCheck(2) > maxOfCorners(2,2) && pointToCheck(2) < maxOfCorners(1,2) &&...
          pointToCheck(3) > maxOfCorners(2,3) && pointToCheck(3) < maxOfCorners(1,3)))
