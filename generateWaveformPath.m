@@ -7,11 +7,18 @@ function path = generateWaveformPath(startPoint, finishPoint, map, resolution)
   startPointMap = convertCoordinateToMap(startPoint, map, resolution);
   finishPointMap = convertCoordinateToMap(finishPoint, map, resolution);
   if (map(startPointMap(1), startPointMap(2), startPointMap(3))==2)
-    error(['start point is an obstacle']);
+    error(['generateWavefrontPath-start point is an obstacle']);
   endif
   if (map(finishPointMap(1), finishPointMap(2), finishPointMap(3))==2)
-    error(['finish point is an obstacle']);
+    error(['generateWavefrontPath-finish point ', num2str(finishPoint'),...
+    ', (', num2str(finishPointMap'), ') is an obstacle']);
   endif
+  if (isequal(startPointMap, finishPointMap))
+    path = finishPointMap;
+    return;
+  endif
+  
+  
   pointMap(startPointMap(1), startPointMap(2), startPointMap(3)) = -1;
   pointMap(finishPointMap(1), finishPointMap(2), finishPointMap(3)) = 1;
   % set obstacles on point map

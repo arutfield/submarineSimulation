@@ -1,11 +1,12 @@
-function [frontierCentroidMap, frontierMap] = findFrontierCentroid(knownMap)
+function [frontierCentroidMap, frontierMap] = findFrontierCentroid(expandedObstacleMap, currentPositionMap=zeros(3,1))
   frontierMap = [];
-  mapSizes = [size(knownMap,1) size(knownMap,2) size(knownMap,3)];
+  backupSpotsMap = [];
+  mapSizes = [size(expandedObstacleMap,1) size(expandedObstacleMap,2) size(expandedObstacleMap,3)];
   for r=1:mapSizes(1)
     for c=1:mapSizes(2)
       for d=1:mapSizes(3)
-        spot = knownMap(r, c, d);
-        if (spot != 0)
+        spot = expandedObstacleMap(r, c, d);
+        if (spot == 1)
           for k=-1:1
             if (r+k < 1 || r+k>mapSizes(1))
               continue;
@@ -18,8 +19,9 @@ function [frontierCentroidMap, frontierMap] = findFrontierCentroid(knownMap)
                 if (d+m < 1 || d+m>mapSizes(3) || (m==0 && l==0 && k==0))
                   continue;
                 endif
-                if (knownMap(r+k, c+l, d+m) == 0)
+                if (expandedObstacleMap(r+k, c+l, d+m) == 0)
                   frontierMap = [frontierMap [(2*r+k)/2; (2*c+l)/2; (2*d+m)/2]];
+                  backupSpotsMap = [backupSpotsMap [r; c; d]];
                 endif
               endfor
             endfor
@@ -30,6 +32,11 @@ function [frontierCentroidMap, frontierMap] = findFrontierCentroid(knownMap)
       endfor
     endfor
   endfor
-  frontierCentroidMap = mean(frontierMap')';
-  
+  frontierCentroidMap = round(mean(frontierMap'))';
+  while (isequal(frontierCentroidMap, currentPositionMap) || expandedObstacleMap(frontierCentroidMap(1), frontierCentroidMap(2), frontierCentroidMap(3)) == 2)
+    % if centroid is obstacle, move to random spot
+    disp('findFrontierCentroid-Centroid is obstacle or current location, moving to random frontier spot');
+    frontierCentroidMap = backupSpotsMap(:,round(size(backupSpotsMap, 2)*rand)); 
+  endwhile
+  disp(['findFrontierCentroid-New centroid: ', num2str(frontierCentroidMap')]);
 endfunction

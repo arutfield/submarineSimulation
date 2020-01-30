@@ -13,13 +13,13 @@ function [updatedMap, expandedObstaclesMap, newSpots] = updateMap(obstacleMap, k
       for d=1:size(knownMap,3)
         if (knownMap(r,c,d)==3)
           updatedMap(r,c,d)=obstacleMap(r,c,d);
-          disp(['updateMap-Former sub spot removed: ', num2str([r c d])]);
+          %disp(['updateMap-Former sub spot removed: ', num2str([r c d])]);
           newSpots = [newSpots [r; c; d]];
         endif
       endfor
     endfor
   endfor
-  disp(["updateMap-", num2str(length(newSpots)), " old sub spots found"]);
+  %disp(["updateMap-", num2str(length(newSpots)), " old sub spots found"]);
   
   % sub knows area flashlight distance in every direction + sub dimension/2
   % dimension is length (along x) followed by width (along y) then depth (along z)
@@ -156,7 +156,7 @@ endfor
       endfor
     endfor
   endfor
-  disp(['updateMap-new spots found: ', num2str(length(newSpots))]);
+  %disp(['updateMap-new spots found: ', num2str(length(newSpots))]);
   expandedObstaclesMap = generateExpandedObstaclesMap(updatedMap, submarineStartPoint, submarineDimensions, resolution);
 end
 

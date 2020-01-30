@@ -7,4 +7,4 @@ submarineMaximumSpeed = 13;
 submarineAcceleration = 2;
 submarineDeceleration = 3;
 submarineMaximumDepth = 300;
-submarineLightDistance = 30;
+submarineLightDistance = 200;

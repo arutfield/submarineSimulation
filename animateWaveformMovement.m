@@ -1,13 +1,15 @@
-function [knownMap, expandedObstaclesMap, figureHandle, totalTime, finalSubPosition, oldSubHandles, success] = animateWaveformMovement(knownMap, fullMap, expandedObstaclesMap, wavefrontPathMap, submarineDimensions, subHandles, flashlightRange, resolution, maxSpeed, acceleration, deceleration, figureHandle);
+function [knownMap, expandedObstaclesMap, figureHandle, totalTime, finalSubPosition, oldSubHandles, success] = animateWaveformMovement(knownMap, fullMap, expandedObstaclesMap, wavefrontPathMap, submarineDimensions, subHandles, flashlightRange, resolution, maxSpeed, acceleration, deceleration, figureHandle, oldSubHandles);
   success=true;
   twoDimensions=true;
   if size(knownMap,3)>1
     twoDimensions=false;
   endif
   dimensions=size(knownMap);
-  [~, oldSubHandles]=plotKnownMap(knownMap, resolution, subHandles, figureHandle);
-  set(gca, 'Color', 'k');
-  hold on;
+  %disp('animateWaveformMovement-plotting known map');
+  %[~, oldSubHandles]=plotKnownMap(knownMap, resolution, subHandles, figureHandle);
+  %set(gca, 'Color', 'k');
+  %hold on;
+  %disp('animateWaveformMovement-known map plotted');
   axisVector=[];
   for d=1:2
     axisVector = [axisVector -dimensions(3-d)/2*resolution dimensions(3-d)/2*resolution];
@@ -33,7 +35,7 @@ function [knownMap, expandedObstaclesMap, figureHandle, totalTime, finalSubPosit
 
     % check if waypoint still clear. Otherwise, don't move
     if (!waypointStillClear(expandedObstaclesMap, trajectoryMap, 1))
-      disp(['Obstacle found, stopping between waypoints']);
+      %disp(['Obstacle found, stopping between waypoints']);
       finalSubPosition = subPosition;
       success=false;
       disp(['Leaving between waypoints, final position: ', num2str(finalSubPosition')]);
@@ -79,7 +81,7 @@ function [knownMap, expandedObstaclesMap, figureHandle, totalTime, finalSubPosit
           endif
           [knownMap,  expandedObstaclesMap, newLocations ]=updateMap(fullMap, knownMap, subPosition, submarineDimensions, flashlightRange, resolution);
           [oldSubHandles]=plotUpdatedMap(knownMap, resolution, dimensions, twoDimensions, newLocations, oldSubHandles);
-          pause(0.01);
+          %pause(0.01);
           prevPositionMap = subPositionMap;
           totalTime = totalTime + time(m);
         endfor
@@ -112,7 +114,7 @@ subIndex=1;
 submarineHandles = [];
 shiftValue = 0.5*resolution;
 
-disp(['plotUpdatedMap-newLocations size-', num2str(length(newLocations))]);
+%disp(['plotUpdatedMap-newLocations size-', num2str(length(newLocations))]);
 subCell=0;
 % filter new locations
 newLocations = unique(newLocations', "rows", "first");
@@ -140,7 +142,7 @@ for k = 1:size(newLocations, 2)
             fill(x_vect, y_vect, 'r', 'EdgeColor', 'None');
           case 3
             fill(x_vect, y_vect, 'g', 'EdgeColor', 'None');
-            disp(['plotUpdatedMap: sub cell:', num2str(newLocations(:,k)')]);
+            %disp(['plotUpdatedMap: sub cell:', num2str(newLocations(:,k)')]);
             subCell++;
           otherwise
             error(["unknown value: ", num2str(value)]);
@@ -159,7 +161,7 @@ for k = 1:size(newLocations, 2)
           end
       endif
 endfor
-disp(['plotUpdatedMap-number of sub cells: ', num2str(subCell)]);
+%disp(['plotUpdatedMap-number of sub cells: ', num2str(subCell)]);
 endfunction
 
 

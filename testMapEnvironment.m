@@ -3,10 +3,12 @@ pkg load geometry;
 loadSubmarineSpecifications;
 
 resolution = 10;
-mapSize = [2000 2000];
+mapSize = [1000 1000];
+submarineDimensions = [submarineLength submarineHeight submarineWidth];
 disp('Generating list of obstacles');
 %listOfObstacles = generateObstacles(mapSize, norm(submarineDimensions)*2, resolution, true);
 load obstacleData;
 disp('Made list of obstacles');
 fullMap = generateMap(listOfObstacles, mapSize, false, resolution);
-[success, knownMap]=mapEnvironment(fullMap, resolution);
+disp('testMapEnvironment-generated map');
+[success, knownMap, finalPosition]=mapEnvironment(fullMap, resolution);
