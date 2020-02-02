@@ -20,6 +20,23 @@ while proportionKnown < 1
   disp(['mapEnvironment-generating waveform path']);
   wavePathMap = generateWaveformPath(origin, nextPoint, expandedObstaclesMap, resolution);
   disp(['mapEnvironment-waveform path generated']);
+  if (isempty(wavePathMap))
+    disp('mapEnvironment-no path found. Looking at Frontier spaces');
+    [~, backupSpotsMap] = findFrontierAndNearSpots(expandedObstaclesMap);
+    for v=1:size(backupSpotsMap, 2)
+      nextPoint = convertMapToCoordinate(backupSpotsMap(:,v), expandedObstaclesMap, resolution);
+      wavePathMap = generateWaveformPath(origin, nextPoint, expandedObstaclesMap, resolution);      
+      if (!isempty(wavePathMap))
+        disp(['mapEnvironment-navigating to frontier point ', num2str(nextPoint'), ' instead']);
+        break;
+      endif
+    endfor
+    if (isempty(wavePathMap))
+      disp('Ran out of frontier spots. Finished mapping');
+      disp(['mapEnvironment-total time: ', num2str(totalTime)]);
+      return;
+    endif
+  endif
   [finalMap, expandedObstaclesMap, figureHandle2D, movementTime, lastPoint]=animateWaveformMovement...
     (finalMap, fullMap, expandedObstaclesMap, wavePathMap, submarineDimensions, [],...
      submarineLightDistance, resolution, submarineMaximumSpeed, submarineAcceleration, submarineDeceleration, a, submarineHandles);

@@ -3,7 +3,7 @@ function figureHandle = plotFrontierMap(map, frontier, centroid, resolution)
   figureHandle = plotKnownMap(map, resolution, []);
   figure(figureHandle);
   hold on;
-  shiftValue = 0.25*resolution;
+  shiftValue = 0.125*resolution;
   twoDimensions=true;
   if size(map,3)>1
     twoDimensions=false;
