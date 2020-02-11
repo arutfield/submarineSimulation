@@ -57,13 +57,18 @@ function expandedObstaclesMap = generateExpandedObstaclesMap(map, submarineLocat
     endfor
   endfor
   
+  is3D=false;
+  if (mapSizes(3) > 1)
+    is3D=true;
+  endif
+  
   % fill in edges
   for r=1:mapSizes(1)
     for c=1:mapSizes(2)
       for d=1:mapSizes(3)
          if ((r-1) < ceil(submarineDimensions(2)*scale) || r >mapSizes(1)-ceil(submarineDimensions(2)*scale)...
            || (c-1) < ceil(submarineDimensions(1)*scale) || c >mapSizes(2)-ceil(submarineDimensions(1)*scale)...
-           || (d-1)< ceil(submarineDimensions(3)*scale) || d >mapSizes(3)-ceil(submarineDimensions(3)*scale))
+           || d >mapSizes(3)-ceil(submarineDimensions(3)*scale))
            expandedObstaclesMap(r,c,d) = 2;
          endif
       endfor
