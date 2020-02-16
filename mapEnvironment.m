@@ -17,7 +17,12 @@ sizeProduct = prod(size(fullMap));
 proportionKnown = length(find(finalMap != 0))/sizeProduct;
 unReachableSpotsMap = [];
 while proportionKnown < 1
-  nextPoint = convertMapToCoordinate(findFrontierCentroid(expandedObstaclesMap, convertCoordinateToMap(origin, finalMap, resolution)), finalMap, resolution);
+  centroidMap = findFrontierCentroid(finalMap, expandedObstaclesMap, convertCoordinateToMap(origin, finalMap, resolution));
+  if (centroidMap(1) < 0 && centroidMap(2) < 0 && centroidMap(3) < 0)
+    disp(['mapEnvironment-no frontier left']);
+    break;
+  endif
+  nextPoint = convertMapToCoordinate(centroidMap, finalMap, resolution);
   disp(['mapEnvironment-generating waveform path']);
   wavePathMap = generateWaveformPath(origin, nextPoint, expandedObstaclesMap, resolution);
   disp(['mapEnvironment-waveform path generated']);

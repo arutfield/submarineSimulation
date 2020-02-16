@@ -36,7 +36,7 @@
         endif
         allObstacles = [allObstacles [obstacleCenterX; obstacleCenterY; 0]];
       else
-        obstacleCenterZ = -rand*(sideLengths(3)-1)-0.5;
+        obstacleCenterZ = -rand*(sideLengths(3)-resolution/2)+0.5;
         obstacleZ = [obstacleCenterZ-0.5 obstacleCenterZ-0.5 obstacleCenterZ+0.5 obstacleCenterZ+0.5];
         if norm([obstacleX obstacleY obstacleZ])<distanceFromSubOrigin
           continue;

@@ -11,7 +11,7 @@ submarineLocation = [0 0 0]';
 submarineDimensions = [4 2 0];
 [map, figureHandle2DMap] = generateMap(obstacles, dimensions2D, false, resolution);
 initialUnknownMap = generateUnknownMap(map, submarineLocation, submarineDimensions, 5, resolution);
-[centroid, frontierMap] = findFrontierCentroid(initialUnknownMap);
+[centroid, frontierMap] = findFrontierCentroid(initialUnknownMap, initialUnknownMap);
 figureHandle = plotFrontierMap(initialUnknownMap, frontierMap, centroid, resolution);
 expandedMap = generateExpandedObstaclesMap(initialUnknownMap, submarineLocation, submarineDimensions, resolution);
 plotKnownMap(expandedMap, resolution, []);
@@ -24,7 +24,7 @@ submarineLocation3D = [0 0 -1]';
 submarineDimensions3D = [4 2 1];
 [map3D, figureHandle3DMap] = generateMap(obstacles3D, [6 7 8], false, resolution);
 initialUnknownMap3D = generateUnknownMap(map3D, submarineLocation3D, submarineDimensions3D, 5, resolution);
-[centroid3D, frontierMap3D] = findFrontierCentroid(initialUnknownMap3D);
+[centroid3D, frontierMap3D] = findFrontierCentroid(initialUnknownMap3D, initialUnknownMap3D);
 figureHandle3D = plotFrontierMap(initialUnknownMap3D, frontierMap3D, centroid3D, resolution);
 
 expandedMap3D = generateExpandedObstaclesMap(initialUnknownMap3D, submarineLocation3D, submarineDimensions3D, resolution);

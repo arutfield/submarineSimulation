@@ -13,7 +13,9 @@ fullMap = generateMap(listOfObstacles, mapSize, false, resolution);
 disp('testMapEnvironment-generated map');
 [success, knownMap, finalPosition]=mapEnvironment(fullMap, resolution);
 
-
+clear; clc; close all;
+pkg load geometry;
+loadSubmarineSpecifications;
 resolution = 20;
 mapSize3D = [500 500 500];
 submarineDimensions = [submarineLength submarineHeight submarineWidth];
