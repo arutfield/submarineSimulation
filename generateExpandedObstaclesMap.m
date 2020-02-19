@@ -1,4 +1,4 @@
-function expandedObstaclesMap = generateExpandedObstaclesMap(map, submarineLocation, submarineDimensions, resolution)
+function expandedObstaclesMap = generateExpandedObstaclesMap(map, submarineLocation, submarineDimensions, resolution, maxDepth=-1)
   mapSizes = [size(map, 1) size(map, 2) size(map, 3)];
   expandedObstaclesMap = zeros(mapSizes);
   submarineLocationMap = convertCoordinateToMap(submarineLocation, map, resolution);
@@ -62,13 +62,20 @@ function expandedObstaclesMap = generateExpandedObstaclesMap(map, submarineLocat
     is3D=true;
   endif
   
+  lowestPointMap = mapSizes(3)-ceil(submarineDimensions(3)*scale);
+  
+  maxDepthMap = convertCoordinateToMap([0; 0; -maxDepth], expandedObstaclesMap, resolution);
+  
+  if (maxDepthMap(3) > 1 && maxDepthMap(3) < lowestPointMap)
+    lowestPointMap = maxDepthMap(3);
+  endif
   % fill in edges
   for r=1:mapSizes(1)
     for c=1:mapSizes(2)
       for d=1:mapSizes(3)
          if ((r-1) < ceil(submarineDimensions(2)*scale) || r >mapSizes(1)-ceil(submarineDimensions(2)*scale)...
            || (c-1) < ceil(submarineDimensions(1)*scale) || c >mapSizes(2)-ceil(submarineDimensions(1)*scale)...
-           || d >mapSizes(3)-ceil(submarineDimensions(3)*scale))
+           || d >lowestPointMap)
            expandedObstaclesMap(r,c,d) = 2;
          endif
       endfor

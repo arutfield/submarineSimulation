@@ -39,7 +39,7 @@ endfor
 for r=1:size(corners,1)
   for c=1:size(corners, 2)
     if (cornersMap(r,c) < 1 || cornersMap(r,c) > size(obstacleMap, r))
-      error(["corner off board: ", num2str(r), ",", num2str(c)]);
+      error(["generateUnknownMap-corner off board: ", num2str(r), ",", num2str(c)]);
     endif
   endfor
 endfor

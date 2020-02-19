@@ -1,4 +1,4 @@
-function [knownMap, expandedObstaclesMap, figureHandle, totalTime, finalSubPosition, oldSubHandles, success] = animateWaveformMovement(knownMap, fullMap, expandedObstaclesMap, wavefrontPathMap, submarineDimensions, subHandles, flashlightRange, resolution, maxSpeed, acceleration, deceleration, figureHandle, oldSubHandles);
+function [knownMap, expandedObstaclesMap, figureHandle, totalTime, finalSubPosition, oldSubHandles, success] = animateWaveformMovement(knownMap, fullMap, expandedObstaclesMap, wavefrontPathMap, submarineDimensions, subHandles, flashlightRange, resolution, maxSpeed, acceleration, deceleration, figureHandle, oldSubHandles, maximumDepth);
   success=true;
   twoDimensions=true;
   if size(knownMap,3)>1
@@ -53,7 +53,7 @@ function [knownMap, expandedObstaclesMap, figureHandle, totalTime, finalSubPosit
         continue;
       endif
 
-      [knownMap, expandedObstaclesMap, newLocations ]=updateMap(fullMap, knownMap, subPosition, submarineDimensions, flashlightRange, resolution);
+      [knownMap, expandedObstaclesMap, newLocations ]=updateMap(fullMap, knownMap, subPosition, submarineDimensions, flashlightRange, resolution, maximumDepth);
       [oldSubHandles]=plotUpdatedMap(knownMap, resolution, dimensions, twoDimensions, newLocations, oldSubHandles, figureHandle);
 
       
@@ -79,7 +79,7 @@ function [knownMap, expandedObstaclesMap, figureHandle, totalTime, finalSubPosit
           if (isequal(subPositionMap, prevPositionMap))
             continue;
           endif
-          [knownMap,  expandedObstaclesMap, newLocations ]=updateMap(fullMap, knownMap, subPosition, submarineDimensions, flashlightRange, resolution);
+          [knownMap,  expandedObstaclesMap, newLocations ]=updateMap(fullMap, knownMap, subPosition, submarineDimensions, flashlightRange, resolution, maximumDepth);
           [oldSubHandles]=plotUpdatedMap(knownMap, resolution, dimensions, twoDimensions, newLocations, oldSubHandles);
           %pause(0.01);
           prevPositionMap = subPositionMap;

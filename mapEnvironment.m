@@ -7,7 +7,7 @@ finalMap = generateUnknownMap(fullMap, origin, submarineDimensions,...
  submarineLightDistance, resolution);
 [a, submarineHandles] = plotKnownMap(finalMap, resolution, []);
 disp('mapEnvironment-Finding expanded obstacles map');
-expandedObstaclesMap = generateExpandedObstaclesMap(finalMap, origin, submarineDimensions, resolution);
+expandedObstaclesMap = generateExpandedObstaclesMap(finalMap, origin, submarineDimensions, resolution, submarineMaximumDepth);
 plotKnownMap(expandedObstaclesMap, resolution, []);
 count=0;
 %a=figure;
@@ -18,17 +18,20 @@ proportionKnown = length(find(finalMap != 0))/sizeProduct;
 unReachableSpotsMap = [];
 while proportionKnown < 1
   centroidMap = findFrontierCentroid(finalMap, expandedObstaclesMap, convertCoordinateToMap(origin, finalMap, resolution));
-  if (centroidMap(1) < 0 && centroidMap(2) < 0 && centroidMap(3) < 0)
+  if (centroidMap(1) == -1 && centroidMap(2) < 0 && centroidMap(3) < 0)
     disp(['mapEnvironment-no frontier left']);
     break;
   endif
-  nextPoint = convertMapToCoordinate(centroidMap, finalMap, resolution);
-  disp(['mapEnvironment-generating waveform path']);
-  wavePathMap = generateWaveformPath(origin, nextPoint, expandedObstaclesMap, resolution);
-  disp(['mapEnvironment-waveform path generated']);
+  wavePathMap=[];
+  if (centroidMap(1) != -2)
+    nextPoint = convertMapToCoordinate(centroidMap, finalMap, resolution);
+    disp(['mapEnvironment-generating waveform path']);
+    wavePathMap = generateWaveformPath(origin, nextPoint, expandedObstaclesMap, resolution);
+    disp(['mapEnvironment-waveform path generated']);
+  endif
   if (isempty(wavePathMap))
-    disp('mapEnvironment-no path found. Looking at Frontier spaces');
     [~, backupSpotsMap] = findFrontierAndNearSpots(expandedObstaclesMap);
+    disp(['mapEnvironment-no path found. Looking at Frontier spaces. ', num2str(size(backupSpotsMap, 2)), ' spots to check']);
     for v=1:size(backupSpotsMap, 2)
       % check if spot has been checked before
       alreadyChecked=false;
@@ -51,6 +54,7 @@ while proportionKnown < 1
         disp(['mapEnvironment-navigating to frontier point ', num2str(nextPoint'), ' instead']);
         break;
       else 
+        disp(['mapEnvironment-no path to frontier point ', num2str(nextPoint')]);
         unReachableSpotsMap = [unReachableSpotsMap backupSpotsMap(:,v)];
         continue;
       endif
@@ -63,7 +67,7 @@ while proportionKnown < 1
   endif
   [finalMap, expandedObstaclesMap, figureHandle2D, movementTime, lastPoint, submarineHandles]=animateWaveformMovement...
     (finalMap, fullMap, expandedObstaclesMap, wavePathMap, submarineDimensions, [],...
-     submarineLightDistance, resolution, submarineMaximumSpeed, submarineAcceleration, submarineDeceleration, a, submarineHandles);
+     submarineLightDistance, resolution, submarineMaximumSpeed, submarineAcceleration, submarineDeceleration, a, submarineHandles, submarineMaximumDepth);
   totalTime = totalTime+movementTime;
   disp(['mapEnvironment-animateWaveform ended at point: ', num2str(lastPoint')]);
   origin = lastPoint;
