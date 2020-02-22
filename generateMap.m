@@ -1,3 +1,12 @@
+% generateMap-create map
+%  inputs:
+%   listOfObstacles - list of obstacle coordinates on map
+%   dimensions - map dimension sizes
+%   display - if true, see plot of map created
+%   resolution - map resolution
+%  outputs:
+%   map - map created (1=open, 2=obstacle)
+%   figureHandle - figure handle of generated plot
 function [map, figureHandle] = generateMap(listOfObstacles, dimensions, display, resolution)
   twoDimensions=true;
   if size(dimensions,2)==3

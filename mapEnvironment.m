@@ -1,3 +1,13 @@
+% mapEnvironment - submarine will map entire environment to the best of its
+%                  ability
+%  inputs:
+%   fullMap - information of the simulated full map with no unknowns
+%   resolution - map resolution
+%  outputs:
+%   success - if mapping was able to finish successfully
+%   finalMap - map after exploration is complete
+%   lastPoint - last location of the submarine
+%   totalTime - time sub took moving (processing time irrelevant)
 function [success, finalMap, lastPoint, totalTime] = mapEnvironment(fullMap, resolution)
   success = false;
   loadSubmarineSpecifications;
@@ -10,8 +20,10 @@ disp('mapEnvironment-Finding expanded obstacles map');
 expandedObstaclesMap = generateExpandedObstaclesMap(finalMap, origin, submarineDimensions, resolution, submarineMaximumDepth);
 plotKnownMap(expandedObstaclesMap, resolution, []);
 count=0;
-%a=figure;
-figure(a, 'position', get(0,"screensize"));%[500 500, 1000, 1000]);
+figure(a, 'position', get(0,"screensize"));
+if (size(fullMap,3) > 1)
+  view([30 -30]);
+endif
 totalTime=0;
 sizeProduct = prod(size(fullMap));
 proportionKnown = length(find(finalMap != 0))/sizeProduct;
@@ -25,9 +37,9 @@ while proportionKnown < 1
   wavePathMap=[];
   if (centroidMap(1) != -2)
     nextPoint = convertMapToCoordinate(centroidMap, finalMap, resolution);
-    disp(['mapEnvironment-generating waveform path']);
-    wavePathMap = generateWaveformPath(origin, nextPoint, expandedObstaclesMap, resolution);
-    disp(['mapEnvironment-waveform path generated']);
+    disp(['mapEnvironment-generating wavefront path']);
+    wavePathMap = generateWavefrontPath(origin, nextPoint, expandedObstaclesMap, resolution);
+    disp(['mapEnvironment-wavefront path generated']);
   endif
   if (isempty(wavePathMap))
     [~, backupSpotsMap] = findFrontierAndNearSpots(expandedObstaclesMap);
@@ -49,7 +61,7 @@ while proportionKnown < 1
       endif
 
       nextPoint = convertMapToCoordinate(backupSpotsMap(:,v), expandedObstaclesMap, resolution);
-      wavePathMap = generateWaveformPath(origin, nextPoint, expandedObstaclesMap, resolution);      
+      wavePathMap = generateWavefrontPath(origin, nextPoint, expandedObstaclesMap, resolution);      
       if (!isempty(wavePathMap))
         disp(['mapEnvironment-navigating to frontier point ', num2str(nextPoint'), ' instead']);
         break;
@@ -65,15 +77,15 @@ while proportionKnown < 1
       return;
     endif
   endif
-  [finalMap, expandedObstaclesMap, figureHandle2D, movementTime, lastPoint, submarineHandles]=animateWaveformMovement...
-    (finalMap, fullMap, expandedObstaclesMap, wavePathMap, submarineDimensions, [],...
+  [finalMap, expandedObstaclesMap, figureHandle2D, movementTime, lastPoint, submarineHandles]=animateWavefrontMovement...
+    (finalMap, fullMap, expandedObstaclesMap, wavePathMap, submarineDimensions,...
      submarineLightDistance, resolution, submarineMaximumSpeed, submarineAcceleration, submarineDeceleration, a, submarineHandles, submarineMaximumDepth);
   totalTime = totalTime+movementTime;
-  disp(['mapEnvironment-animateWaveform ended at point: ', num2str(lastPoint')]);
+  disp(['mapEnvironment-animateWavefront ended at point: ', num2str(lastPoint')]);
   origin = lastPoint;
   count++;
   
-  save(["finalMap_", num2str(count)]);
+  %save(["finalMap_", num2str(count)]);
   disp(['mapEnvironment-count: ', num2str(count)]);
   prevProportion = proportionKnown;
   proportionKnown = length(find(finalMap != 0))/sizeProduct;

@@ -1,3 +1,15 @@
+% generateTrapezoidalTrajectory - create trajectory with trapezoidal velocity
+%                                 shape
+%  inputs:
+%   startPoint-beginning point
+%   endPoint-ending point
+%   maxSpeed-maximum allowed speed
+%   acceleration-rate of speed increase
+%   deceleration-rate of speed decrease
+%  outputs:
+%   trapezoidalTrajectory - resulting trajectory with 3 dimensions
+%   t_time - time vector for trajectory
+%   distanceProportions - proportions of distance completed so far (1=end)
 function [trapezoidalTrajectory, t_time, distanceProportions]= generateTrapezoidalTrajectory(startPoint, endPoint, maxSpeed, acceleration, deceleration)
   %sample 100 Hz
   frequency = 100;

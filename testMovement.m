@@ -1,5 +1,10 @@
 % create empty map
+% test having a sub generate a path between two points and shows it moving
+% across the map
+
 clear; clc; close all;
+loadSubmarineSpecifications;
+% 2D sub movement
 dimensions2D = [25 25];
 resolution = 0.5;
 startPoint2D = zeros(3,1);
@@ -12,12 +17,13 @@ unknownMap2DHandle = plotKnownMap(unknownMap, resolution, []);
 expandedObstaclesMap = generateExpandedObstaclesMap(unknownMap, startPoint2D, subSize2D, resolution);
 plotKnownMap(expandedObstaclesMap, resolution);
 
-wavePath2DMap = generateWaveformPath(startPoint2D, finishPoint2D, expandedObstaclesMap, resolution);
+wavePath2DMap = generateWavefrontPath(startPoint2D, finishPoint2D, expandedObstaclesMap, resolution);
 a=figure;
-[finalMap, expandedObstaclesMap, figureHandle2D, totalTime2D]=animateWaveformMovement(unknownMap, fullMap2D, expandedObstaclesMap, wavePath2DMap, subSize2D, [], flashlightRange, resolution, 13, 8, 10, a);
+[finalMap, expandedObstaclesMap, figureHandle2D, totalTime2D]=...
+animateWavefrontMovement(unknownMap, fullMap2D, expandedObstaclesMap, wavePath2DMap, subSize2D, flashlightRange, resolution, 13, 8, 10, a, []);
                                                                                  
 
-% 3d
+% 3d sub movement
 disp('Start 3d test');
 pkg load geometry;
 dimensions3D = [25 25 25];
@@ -31,13 +37,13 @@ unknownMap3D = generateUnknownMap(fullMap3D, startPoint3D, subSize3D, flashlight
 unknownMap3DHandle = plotKnownMap(unknownMap3D, resolution, []);
 expandedObstaclesMap3D = generateExpandedObstaclesMap(unknownMap3D, startPoint3D, subSize3D, resolution);
 
-wavePath3DMap = generateWaveformPath(startPoint3D, finishPoint3D, expandedObstaclesMap3D, resolution);
+wavePath3DMap = generateWavefrontPath(startPoint3D, finishPoint3D, expandedObstaclesMap3D, resolution);
 a=figure;
-[finalMap3D, expandedObstaclesMap3D, figureHandle3D, totalTime3D, finalSubPosition3D]=animateWaveformMovement(unknownMap3D, fullMap3D, expandedObstaclesMap3D, wavePath3DMap, subSize3D, [], flashlightRange, resolution, 13, 8, 10, a);
+[finalMap3D, expandedObstaclesMap3D, figureHandle3D, totalTime3D, finalSubPosition3D]=animateWavefrontMovement(unknownMap3D, fullMap3D, expandedObstaclesMap3D, wavePath3DMap, subSize3D, flashlightRange, resolution, 13, 8, 10, a);
 
 
 %%
-% 3d with hidden obstacle
+% 3d with hidden obstacle that can only be found mid-movement
 %clear; clc; close all;
 dimensionsObstacle = [20 25 25];
 resolution = 2;
@@ -55,10 +61,10 @@ mainFigureHandle=figure;
 subHandles=[];
 totalTime=0;
 while(!success)
-  wavePathObstacleMap = generateWaveformPath(startPointObstacle, finishPointObstacle, expandedObstaclesMapObstacle, resolution);
+  wavePathObstacleMap = generateWavefrontPath(startPointObstacle, finishPointObstacle, expandedObstaclesMapObstacle, resolution);
   disp(['wavepath: ']);
   disp(num2str(wavePathObstacleMap));
-  [finalMapObstacle, expandedObstaclesMapObstacle, figureHandleObstacle, totalTimeObstacle, finalSubPositionObstacle, subHandles, success]=animateWaveformMovement(unknownMapObstacle, fullMapObstacle, expandedObstaclesMapObstacle, wavePathObstacleMap, subSizeObstacle, subHandles, flashlightRange, resolution, 13, 8, 10, mainFigureHandle);
+  [finalMapObstacle, expandedObstaclesMapObstacle, figureHandleObstacle, totalTimeObstacle, finalSubPositionObstacle, subHandles, success]=animateWavefrontMovement(unknownMapObstacle, fullMapObstacle, expandedObstaclesMapObstacle, wavePathObstacleMap, subSizeObstacle, flashlightRange, resolution, 13, 8, 10, mainFigureHandle);
   startPointObstacle = finalSubPositionObstacle;
   totalTime = totalTime + totalTimeObstacle;
 endwhile

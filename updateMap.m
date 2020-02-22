@@ -1,3 +1,16 @@
+% updateMap - add new information to the known map and update the submarine's new location
+%  inputs -  
+%   obstacleMap - map with obstacles expanded
+%   knownMap - currently known map
+%   submarineStartPoint - current location of submarine
+%   submarineDimensions - submarine dimensions
+%   flashlightRange - how far flashlight can see
+%   resolution - map resolution
+%   submarineDepth - maximum depth of submarine\
+%  outputs - 
+%    updatedMap - knownMap with new updates
+%    expandedObstaclesMap - updatedMap with obstacles expanded
+%    newSpots - grid squares that have been updated
 function [updatedMap, expandedObstaclesMap, newSpots] = updateMap(obstacleMap, knownMap, submarineStartPoint, submarineDimensions, flashlightRange, resolution, submarineDepth)
   updatedMap = knownMap;
   submarineStartMapPoint = convertCoordinateToMap(submarineStartPoint, obstacleMap, resolution);

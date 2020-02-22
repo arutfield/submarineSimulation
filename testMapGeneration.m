@@ -1,3 +1,6 @@
+% test that maps get generated correctly
+
+% create a 2D map
 pkg load geometry;
 clear; clc; close all;
 resolution = 0.5;
@@ -17,12 +20,13 @@ figureHandleUpdated = plotKnownMap(unknownMapUpdated, resolution, []);
 
 
 resolution = 5;
-% big map for timing
+% big map for timing test and large resolution
 dimensions2DBig = [500 600];
 [bigMap, figureHandle2DBigMap] = generateMap(obstacles, dimensions2DBig, false, resolution);
 initialUnknownBigMap = generateUnknownMap(bigMap, [-100 0 0]', [submarineLength submarineWidth 0], submarineLightDistance, resolution);
 bigFigureHandle = plotKnownMap(initialUnknownBigMap, resolution);
 
+% test creating a 3D map with a small resolution
 resolution = 0.5;
 obstacles3D = [0.5  2.5  1.5  0.5 -1.5  1.5  1.5  1.5  ;...
                1    0   -1    0   -1   -1    0    0;...

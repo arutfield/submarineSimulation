@@ -1,3 +1,12 @@
+% plotMap - display a given map where black is unknown, white is open, orange
+%           is obstacle, and green is the sub
+%  inputs-
+%    map - map to plot
+%    listOfObstacles - obstacles to show
+%    dimensions - size of map in each of three dimensions
+%    twoDimensions - boolean to tell if map is two or three dimensions
+%  outputs-
+%    figureHandle - handle of resulting figure
 function figureHandle = plotMap(map, listOfObstacles, dimensions, resolution, twoDimensions)
       % set up display
     figureHandle=figure();

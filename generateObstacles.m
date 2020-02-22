@@ -1,3 +1,12 @@
+% generateObstacles - create obstacles on the map
+%  inputs:
+%   sideLengths - side lengths of map
+%   distanceFromSubOrigin - minimum distance an obstacle can be from sub
+%   resolution - map resolution
+%   visual - boolean indicating if you want to see plot
+%   test - fixed number of 1000 obstacles if true (default=false)
+%  outputs:
+%   allObstacles - all obstacles coordinates generated
   function allObstacles = generateObstacles(sideLengths, distanceFromSubOrigin, resolution, visual, test=false)
     %clear; clc; close all;
     if (visual)

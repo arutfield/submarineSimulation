@@ -1,3 +1,13 @@
+% generateExpandedObstaclesMap - create version of map where sub is one space
+%                                and obstacles are expanded to size of sub
+%  inputs:
+%   map - known map to convert
+%   submarineLocation - location of submarine
+%   submarineDimensions - dimensions of submarine
+%   resolution - map resolution
+%   maxDepth - maximum allowed depth (default=-1, meaning none)
+%  outputs:
+%   expandedObstaclesMap - map where obstacles are expanded and sub is one space
 function expandedObstaclesMap = generateExpandedObstaclesMap(map, submarineLocation, submarineDimensions, resolution, maxDepth=-1)
   mapSizes = [size(map, 1) size(map, 2) size(map, 3)];
   expandedObstaclesMap = zeros(mapSizes);

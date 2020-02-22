@@ -1,3 +1,13 @@
+% generateUnknownMap - create map where only thing known is sub location and 
+%                      what sub can currently see
+%  inputs:
+%   obstacleMap - map with all obstacles on it
+%   submarineStartPoint - start point of submarine
+%   submarineDimensions - dimensions of submarine
+%   flashlightRange - distance submarine can see
+%   resolution - map resolution
+%  outputs:
+%   updatedMap - map with sub and grid squares sub can see revealed, rest unknown
 function [updatedMap]= generateUnknownMap(obstacleMap, submarineStartPoint, submarineDimensions, flashlightRange, resolution)
 %  resolution = 0.5;
   % for map of the unknown: 0 is unknown, 1 is open, 2 is obstacle, 3 is submarine current position

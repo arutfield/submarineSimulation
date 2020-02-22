@@ -1,3 +1,12 @@
+% plotKnownMap - plot map where some areas are unknown
+%  inputs
+%    knownMap - map where parts are known
+%    resolution - resolution of map
+%    oldSubmarineHandles - figure handles of cubes representing submarine
+%    figureHandle - figure handle to use (default=0)
+%  outputs
+%    figureHandle - new figure handle to use for this plot
+%    submarineHanldes - figure handles of submarine locations
 function [figureHandle, submarineHandles]=plotKnownMap(knownMap, resolution, oldSubmarineHandles, figureHandle=0)
 twoDimensions=true;
 if size(knownMap,3)>1

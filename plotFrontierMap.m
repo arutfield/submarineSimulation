@@ -1,3 +1,11 @@
+% plotFrontierMap - plots the frontier on a plot of the map
+%  inputs:
+%   map - map to plot
+%   frontier - list of frontier points
+%   centroid - current centroid
+%   resolution - map resolution
+%  outputs:
+%    figureHandle - handle for figure
 function figureHandle = plotFrontierMap(map, frontier, centroid, resolution)
   mapSizes = [size(map, 1) size(map, 2) size(map, 3)];
   figureHandle = plotKnownMap(map, resolution, []);

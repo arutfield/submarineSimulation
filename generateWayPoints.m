@@ -1,3 +1,8 @@
+% generateWayPoints - create way points from waveFrontPath
+%  inputs:
+%    waveFrontPoints - points traveled in wavefront algorithm
+%  outputs:
+%    wayPoints indicating where sub will need to turn
 function wayPoints = generateWayPoints(waveFrontPoints);
   wayPoints = waveFrontPoints(:,1); % add startpoint
   for k=2:size(waveFrontPoints,2)-1

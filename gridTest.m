@@ -1,4 +1,6 @@
+% test script to create obstacles and draw them as cubes in 3D
 clear; clc; close all;
+pkg load geometry
 figure;
 hold on;
 axis([-100 100 -100 100 -100 100]);
