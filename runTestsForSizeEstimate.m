@@ -52,10 +52,10 @@ b=491.35038
 
 % loch ness is 7.4 cubic km 
 estimatedLochNessSize = 7.4 * 1000^3;
-lochNessTime = a+b*ln(estimatedLochNessSize);
+lochNessTime = a+b*log(estimatedLochNessSize);
 disp(['Estimate time to map Loch Ness: ', num2str(lochNessTime)]);
 
 % ocean is 1.35 billion cubic km
 estimatedOceanSize = 1.35*10^9*1000^3;
-oceanTime = a+b*ln(estimatedOceanSize);
+oceanTime = a+b*log(estimatedOceanSize);
 disp(['Estimate time to map ocean: ', num2str(oceanTime)]);
