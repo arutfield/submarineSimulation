@@ -42,7 +42,7 @@ while proportionKnown < 1
     disp(['mapEnvironment-wavefront path generated']);
   endif
   if (isempty(wavePathMap))
-    [~, backupSpotsMap] = findFrontierAndNearSpots(expandedObstaclesMap);
+    [~, backupSpotsMap] = findFrontierAndNearSpots(finalMap);
     disp(['mapEnvironment-no path found. Looking at Frontier spaces. ', num2str(size(backupSpotsMap, 2)), ' spots to check']);
     for v=1:size(backupSpotsMap, 2)
       % check if spot has been checked before

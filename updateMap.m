@@ -11,7 +11,7 @@
 %    updatedMap - knownMap with new updates
 %    expandedObstaclesMap - updatedMap with obstacles expanded
 %    newSpots - grid squares that have been updated
-function [updatedMap, expandedObstaclesMap, newSpots] = updateMap(obstacleMap, knownMap, submarineStartPoint, submarineDimensions, flashlightRange, resolution, submarineDepth)
+function [updatedMap, expandedObstaclesMap, newSpots] = updateMap(obstacleMap, knownMap, submarineStartPoint, submarineDimensions, flashlightRange, resolution, submarineDepth=Inf)
   updatedMap = knownMap;
   submarineStartMapPoint = convertCoordinateToMap(submarineStartPoint, obstacleMap, resolution);
   disp(['updateMap-Submarine start point: ', num2str(submarineStartPoint'), ', converted to map: ', num2str(submarineStartMapPoint')]);

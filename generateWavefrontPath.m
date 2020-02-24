@@ -18,8 +18,10 @@ function path = generateWavefrontPath(startPoint, finishPoint, map, resolution)
     error(['generateWavefrontPath-start point is an obstacle']);
   endif
   if (map(finishPointMap(1), finishPointMap(2), finishPointMap(3))==2)
-    error(['generateWavefrontPath-finish point ', num2str(finishPoint'),...
+    disp(['generateWavefrontPath-finish point ', num2str(finishPoint'),...
     ', (', num2str(finishPointMap'), ') is an obstacle']);
+    path = [];
+    return;
   endif
   if (isequal(startPointMap, finishPointMap))
     path = finishPointMap;
